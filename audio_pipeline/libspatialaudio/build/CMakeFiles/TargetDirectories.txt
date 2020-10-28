@@ -1,0 +1,10 @@
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/install/strip.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/install/local.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/edit_cache.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/package_source.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/spatialaudio-shared.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/install.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/list_install_components.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/rebuild_cache.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/package.dir
+/home/yingj4/Desktop/master_new_new/ILLIXR/audio_pipeline/libspatialaudio/build/CMakeFiles/spatialaudio-static.dir
