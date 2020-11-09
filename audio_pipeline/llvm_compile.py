@@ -22,13 +22,13 @@ def main (directory, source):
   TRACER_HOME = os.getenv('TRACER_HOME')
   LLVM_HOME = os.getenv('TRACER_HOME')
 
-  source_file = source + '.c'
+  source_file = source + '.cpp'
   # os.system('%s/bin/get-labeled-stmts triad.c -- -I%s/lib/clang/3.4' % (TRACER_HOME, LLVM_HOME))
   os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include' % (TRACER_HOME, LLVM_HOME))
   # os.system('clang -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
   #           ' -fno-unroll-loops -fno-inline -fno-builtin -emit-llvm -o ' + \
   #           obj + ' '  + source_file)
-  os.system(('%s/bin/clang -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
+  os.system(('%s/bin/clang++ -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
             ' -fno-unroll-loops -fno-inline -emit-llvm -o ' + \
             obj + ' '  + source_file) % (LLVM_HOME))
   # os.system('opt -disable-inlining -S -load=' + TRACER_HOME + \
