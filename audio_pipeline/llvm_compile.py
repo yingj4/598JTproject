@@ -24,7 +24,7 @@ def main (directory, source):
 
   source_file = source + '.cpp'
   # os.system('%s/bin/get-labeled-stmts triad.c -- -I%s/lib/clang/3.4' % (TRACER_HOME, LLVM_HOME))
-  os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include' % (TRACER_HOME, LLVM_HOME))
+  os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include -I./include -I./libspatialaudio/build/Release/include/spatialaudio' % (TRACER_HOME, LLVM_HOME))
   # os.system('clang -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
   #           ' -fno-unroll-loops -fno-inline -fno-builtin -emit-llvm -o ' + \
   #           obj + ' '  + source_file)
