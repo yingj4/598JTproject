@@ -42,7 +42,7 @@ def main (directory, source):
   # os.system('llc -O0 -disable-fp-elim -filetype=asm -o full.s full.llvm')
   os.system(('%s/bin/llc -O0 -disable-fp-elim -filetype=asm -o full.s full.llvm') % (LLVM_HOME))
   # os.system('gcc -static -O0 -fno-inline -o ' + executable + ' full.s -lm -lz')
-  os.system('g++ -static -O0 -fno-inline -o ' + executable + ' full.s -lm -lz -no-pie')
+  os.system('g++ -static -O0 -fno-inline -o ' + executable + ' full.s -lm -lz -no-pie -lpthread')
   os.system('./' + executable)
 
 if __name__ == '__main__':
