@@ -1,5 +1,5 @@
-Script started on 2020-11-09 23:37:38-06:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="282" LINES="75"]
-]0;yingj4@yingj4-Inspiron-7559: ~/Desktop/cs598jtfa20/project/audio_pipeline[01;32myingj4@yingj4-Inspiron-7559[00m:[01;34m~/Desktop/cs598jtfa20/project/audio_pipeline[00m$ diff -w test1.txt test2.txt [3P[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C--help[Kpython3 haha.py > test2.txt1.txt2.txt[16Pdiff --helptest1.txt test2.txt [3@-w [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kg++ -static -O0 -fno-inline -o main main.s -I./libspatialaudio/build/Release/lib/libspatialaudio.a -lm -lz -no-pie
+Script started on 2020-11-10 00:06:36-06:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="282" LINES="75"]
+]0;yingj4@yingj4-Inspiron-7559: ~/Desktop/cs598jtfa20/project/audio_pipeline[01;32myingj4@yingj4-Inspiron-7559[00m:[01;34m~/Desktop/cs598jtfa20/project/audio_pipeline[00m$ exitg++ -static -O0 -fno-inline -o main main.s -I./libspatialaudio/build/Release/lib/libspatialaudio.a -lm -lz -no-pie
 /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/libstdc++.a(locale.o): in function `__gnu_cxx::__scoped_lock::~__scoped_lock()':
 (.text._ZN9__gnu_cxx13__scoped_lockD2Ev[_ZN9__gnu_cxx13__scoped_lockD5Ev]+0x16): undefined reference to `pthread_mutex_unlock'
 /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/libstdc++.a(locale.o): in function `std::locale::_Impl::_M_install_cache(std::locale::facet const*, unsigned long)':
@@ -43,37 +43,15 @@ Script started on 2020-11-09 23:37:38-06:00 [TERM="xterm-256color" TTY="/dev/pts
 (.text+0x16cb): undefined reference to `pthread_mutex_unlock'
 /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/libgcc_eh.a(unwind-dw2-fde-dip.o): in function `__register_frame_info_table_bases':
 (.text+0x17df): undefined reference to `pthread_mutex_unlock'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `CAmbisonicBase::Configure(unsigned int, bool, unsigned int)':
-/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBase.cpp:45: undefined reference to `OrderToComponents(unsigned int, bool)'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `CAmbisonicDecoder::SpeakerSetUp(int, unsigned int)':
-/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicDecoder.cpp:134: undefined reference to `DegreesToRadians(float)'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicDecoder.cpp:137: undefined reference to `DegreesToRadians(float)'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicDecoder.cpp:144: undefined reference to `DegreesToRadians(float)'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicDecoder.cpp:147: undefined reference to `DegreesToRadians(float)'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicDecoder.cpp:150: undefined reference to `DegreesToRadians(float)'
-/usr/bin/ld: /tmp/ccJuMpNC.o:/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicDecoder.cpp:157: more undefined references to `DegreesToRadians(float)' follow
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `CAmbisonicBinauralizer::Configure(unsigned int, bool, unsigned int, unsigned int, unsigned int&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
-/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:125: undefined reference to `CAmbisonicEncoder::CAmbisonicEncoder()'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:126: undefined reference to `CAmbisonicEncoder::Configure(unsigned int, bool, unsigned int)'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:129: undefined reference to `DegreesToRadians(float)'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:133: undefined reference to `CAmbisonicEncoder::Refresh()'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:186: undefined reference to `CAmbisonicEncoder::~CAmbisonicEncoder()'
-/usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:186: undefined reference to `CAmbisonicEncoder::~CAmbisonicEncoder()'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `CAmbisonicBinauralizer::ArrangeSpeakers()':
-/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:308: undefined reference to `OrderToSpeakers(unsigned int, bool)'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `CAmbisonicBinauralizer::getHRTF(unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+/usr/bin/ld: /tmp/ccXOGX13.o: in function `CAmbisonicBinauralizer::getHRTF(unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
 /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/libspatialaudio/source/AmbisonicBinauralizer.cpp:346: undefined reference to `MIT_HRTF::MIT_HRTF(unsigned int)'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `Sound':
-/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/src/sound.cpp:20: undefined reference to `CAmbisonicEncoderDist::CAmbisonicEncoderDist()'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `ILLIXR_AUDIO::Sound::readInBFormat()':
-/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/src/sound.cpp:50: undefined reference to `CAmbisonicEncoderDist::Process(float*, unsigned int, CBFormat*)'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `open_trace_file()':
+/usr/bin/ld: /tmp/ccXOGX13.o: in function `open_trace_file()':
 /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/src/main.cpp:52: undefined reference to `pthread_mutex_lock'
 /usr/bin/ld: /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/src/main.cpp:52: undefined reference to `pthread_mutex_unlock'
-/usr/bin/ld: /tmp/ccJuMpNC.o: in function `trace_logger_init':
+/usr/bin/ld: /tmp/ccXOGX13.o: in function `trace_logger_init':
 /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/src/main.cpp:52: undefined reference to `pthread_mutex_init'
 collect2: error: ld returned 1 exit status
 ]0;yingj4@yingj4-Inspiron-7559: ~/Desktop/cs598jtfa20/project/audio_pipeline[01;32myingj4@yingj4-Inspiron-7559[00m:[01;34m~/Desktop/cs598jtfa20/project/audio_pipeline[00m$ exit
 exit
 
-Script done on 2020-11-09 23:37:55-06:00 [COMMAND_EXIT_CODE="1"]
+Script done on 2020-11-10 00:06:45-06:00 [COMMAND_EXIT_CODE="1"]
