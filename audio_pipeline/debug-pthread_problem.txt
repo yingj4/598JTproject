@@ -1,5 +1,3 @@
-Script started on 2020-11-10 00:06:36-06:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="282" LINES="75"]
-]0;yingj4@yingj4-Inspiron-7559: ~/Desktop/cs598jtfa20/project/audio_pipeline[01;32myingj4@yingj4-Inspiron-7559[00m:[01;34m~/Desktop/cs598jtfa20/project/audio_pipeline[00m$ exitg++ -static -O0 -fno-inline -o main main.s -I./libspatialaudio/build/Release/lib/libspatialaudio.a -lm -lz -no-pie
 /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/libstdc++.a(locale.o): in function `__gnu_cxx::__scoped_lock::~__scoped_lock()':
 (.text._ZN9__gnu_cxx13__scoped_lockD2Ev[_ZN9__gnu_cxx13__scoped_lockD5Ev]+0x16): undefined reference to `pthread_mutex_unlock'
 /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/libstdc++.a(locale.o): in function `std::locale::_Impl::_M_install_cache(std::locale::facet const*, unsigned long)':
@@ -51,7 +49,3 @@ Script started on 2020-11-10 00:06:36-06:00 [TERM="xterm-256color" TTY="/dev/pts
 /usr/bin/ld: /tmp/ccXOGX13.o: in function `trace_logger_init':
 /home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline/src/main.cpp:52: undefined reference to `pthread_mutex_init'
 collect2: error: ld returned 1 exit status
-]0;yingj4@yingj4-Inspiron-7559: ~/Desktop/cs598jtfa20/project/audio_pipeline[01;32myingj4@yingj4-Inspiron-7559[00m:[01;34m~/Desktop/cs598jtfa20/project/audio_pipeline[00m$ exit
-exit
-
-Script done on 2020-11-10 00:06:45-06:00 [COMMAND_EXIT_CODE="1"]
