@@ -93,7 +93,7 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
     unsigned niSample = 0;
     float fSrcSample = 0;
 
-    for(niSample = 0; niSample < nSamples; niSample++)
+loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
     {
         //Store
         m_pfDelayBuffer[m_nIn] = pfSrc[niSample];

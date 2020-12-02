@@ -42,7 +42,7 @@ void CAmbisonicSpeaker::Process(CBFormat* pBFSrc, unsigned nSamples, float* pfDs
     unsigned niChannel = 0;
     unsigned niSample = 0;
     memset(pfDst, 0, nSamples * sizeof(float));
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopSproc:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         float *in = pBFSrc->m_ppfChannels[niChannel];
         float *out = pfDst;

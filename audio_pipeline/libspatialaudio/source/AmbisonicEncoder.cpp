@@ -41,7 +41,7 @@ void CAmbisonicEncoder::Process(float* pfSrc, unsigned nSamples, CBFormat* pfDst
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopEproc:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < nSamples; niSample++)
         {

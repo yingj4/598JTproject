@@ -1,0 +1,573 @@
+; ModuleID = 'libspatialaudio/source/AmbisonicCommons.cpp'
+source_filename = "libspatialaudio/source/AmbisonicCommons.cpp"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+@switch.table._Z24OrderToComponentPositionjb = private unnamed_addr constant [3 x i32] [i32 1, i32 4, i32 10]
+@switch.table._Z23ComponentToChannelLabeljb = private unnamed_addr constant [16 x i8] c"WYZXVTRUSQOMKLNP"
+
+; Function Attrs: noinline nounwind readnone uwtable
+define float @_Z16DegreesToRadiansf(float) local_unnamed_addr #0 !dbg !368 {
+  call void @llvm.dbg.value(metadata float %0, metadata !370, metadata !DIExpression()), !dbg !371
+  %2 = fmul float %0, 0x400921FB60000000, !dbg !372
+  %3 = fdiv float %2, 1.800000e+02, !dbg !373
+  ret float %3, !dbg !374
+}
+
+; Function Attrs: noinline nounwind readnone uwtable
+define float @_Z16RadiansToDegreesf(float) local_unnamed_addr #0 !dbg !375 {
+  call void @llvm.dbg.value(metadata float %0, metadata !377, metadata !DIExpression()), !dbg !378
+  %2 = fmul float %0, 1.800000e+02, !dbg !379
+  %3 = fdiv float %2, 0x400921FB60000000, !dbg !380
+  ret float %3, !dbg !381
+}
+
+; Function Attrs: noinline nounwind readnone uwtable
+define i32 @_Z17OrderToComponentsjb(i32, i1 zeroext) local_unnamed_addr #0 !dbg !382 {
+  call void @llvm.dbg.value(metadata i32 %0, metadata !387, metadata !DIExpression()), !dbg !389
+  call void @llvm.dbg.value(metadata i1 %1, metadata !388, metadata !DIExpression()), !dbg !390
+  br i1 %1, label %3, label %8, !dbg !391
+
+; <label>:3:                                      ; preds = %2
+  %4 = uitofp i32 %0 to float, !dbg !392
+  %5 = fadd float %4, 1.000000e+00, !dbg !394
+  %6 = fmul float %5, %5, !dbg !395
+  %7 = fptoui float %6 to i32, !dbg !395
+  br label %11, !dbg !396
+
+; <label>:8:                                      ; preds = %2
+  %9 = shl i32 %0, 1, !dbg !397
+  %10 = or i32 %9, 1, !dbg !398
+  br label %11, !dbg !399
+
+; <label>:11:                                     ; preds = %8, %3
+  %12 = phi i32 [ %7, %3 ], [ %10, %8 ]
+  ret i32 %12, !dbg !400
+}
+
+; Function Attrs: noinline nounwind readnone uwtable
+define i32 @_Z24OrderToComponentPositionjb(i32, i1 zeroext) local_unnamed_addr #0 !dbg !401 {
+  call void @llvm.dbg.value(metadata i32 %0, metadata !403, metadata !DIExpression()), !dbg !406
+  call void @llvm.dbg.value(metadata i1 %1, metadata !404, metadata !DIExpression()), !dbg !407
+  call void @llvm.dbg.value(metadata i32 0, metadata !405, metadata !DIExpression()), !dbg !408
+  %3 = add i32 %0, -1
+  %4 = icmp ult i32 %3, 3
+  br i1 %1, label %5, label %6, !dbg !409
+
+; <label>:5:                                      ; preds = %2
+  br i1 %4, label %7, label %14, !dbg !410
+
+; <label>:6:                                      ; preds = %2
+  br i1 %4, label %11, label %14, !dbg !413
+
+; <label>:7:                                      ; preds = %5
+  %8 = sext i32 %3 to i64, !dbg !410
+  %9 = getelementptr inbounds [3 x i32], [3 x i32]* @switch.table._Z24OrderToComponentPositionjb, i64 0, i64 %8, !dbg !410
+  %10 = load i32, i32* %9, align 4, !dbg !410
+  ret i32 %10, !dbg !410
+
+; <label>:11:                                     ; preds = %6
+  %12 = shl i32 %3, 1, !dbg !413
+  %13 = or i32 %12, 1, !dbg !413
+  ret i32 %13, !dbg !413
+
+; <label>:14:                                     ; preds = %6, %5
+  call void @llvm.dbg.value(metadata i32 0, metadata !405, metadata !DIExpression()), !dbg !408
+  ret i32 0, !dbg !415
+}
+
+; Function Attrs: noinline nounwind readnone uwtable
+define i32 @_Z15OrderToSpeakersjb(i32, i1 zeroext) local_unnamed_addr #0 !dbg !416 {
+  call void @llvm.dbg.value(metadata i32 %0, metadata !418, metadata !DIExpression()), !dbg !420
+  call void @llvm.dbg.value(metadata i1 %1, metadata !419, metadata !DIExpression()), !dbg !421
+  %3 = shl i32 %0, 1
+  %4 = add i32 %3, 2
+  %5 = zext i1 %1 to i32, !dbg !422
+  %6 = shl i32 %4, %5, !dbg !422
+  ret i32 %6, !dbg !423
+}
+
+; Function Attrs: noinline nounwind readnone uwtable
+define signext i8 @_Z23ComponentToChannelLabeljb(i32, i1 zeroext) local_unnamed_addr #0 !dbg !424 {
+  call void @llvm.dbg.value(metadata i32 %0, metadata !428, metadata !DIExpression()), !dbg !431
+  call void @llvm.dbg.value(metadata i1 %1, metadata !429, metadata !DIExpression()), !dbg !432
+  call void @llvm.dbg.value(metadata i8 32, metadata !430, metadata !DIExpression()), !dbg !433
+  br i1 %1, label %3, label %5, !dbg !434
+
+; <label>:3:                                      ; preds = %2
+  %4 = icmp ult i32 %0, 16, !dbg !435
+  br i1 %4, label %7, label %16, !dbg !435
+
+; <label>:5:                                      ; preds = %2
+  %6 = icmp ult i32 %0, 7, !dbg !438
+  br i1 %6, label %11, label %16, !dbg !438
+
+; <label>:7:                                      ; preds = %3
+  %8 = sext i32 %0 to i64, !dbg !435
+  %9 = getelementptr inbounds [16 x i8], [16 x i8]* @switch.table._Z23ComponentToChannelLabeljb, i64 0, i64 %8, !dbg !435
+  %10 = load i8, i8* %9, align 1, !dbg !435
+  ret i8 %10, !dbg !435
+
+; <label>:11:                                     ; preds = %5
+  %12 = zext i32 %0 to i56, !dbg !438
+  %13 = shl nuw nsw i56 %12, 3, !dbg !438
+  %14 = lshr i56 22887804842891351, %13, !dbg !438
+  %15 = trunc i56 %14 to i8, !dbg !438
+  ret i8 %15, !dbg !438
+
+; <label>:16:                                     ; preds = %5, %3
+  call void @llvm.dbg.value(metadata i8 32, metadata !430, metadata !DIExpression()), !dbg !433
+  ret i8 32, !dbg !440
+}
+
+; Function Attrs: nounwind readnone speculatable
+declare void @llvm.dbg.value(metadata, metadata, metadata) #1
+
+attributes #0 = { noinline nounwind readnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { nounwind readnone speculatable }
+
+!llvm.dbg.cu = !{!0}
+!llvm.module.flags = !{!364, !365, !366}
+!llvm.ident = !{!367}
+
+!0 = distinct !DICompileUnit(language: DW_LANG_C_plus_plus, file: !1, producer: "clang version 6.0.1 ", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !2, retainedTypes: !3, imports: !6)
+!1 = !DIFile(filename: "libspatialaudio/source/AmbisonicCommons.cpp", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!2 = !{}
+!3 = !{!4, !5}
+!4 = !DIBasicType(name: "float", size: 32, encoding: DW_ATE_float)
+!5 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
+!6 = !{!7, !15, !22, !24, !26, !30, !32, !34, !36, !38, !40, !42, !44, !49, !53, !55, !57, !62, !64, !66, !68, !70, !72, !74, !77, !79, !81, !85, !90, !92, !94, !96, !98, !100, !102, !104, !106, !108, !110, !114, !118, !120, !122, !124, !126, !128, !130, !132, !134, !136, !138, !140, !142, !144, !146, !148, !152, !156, !160, !162, !164, !166, !168, !170, !172, !174, !176, !178, !182, !186, !190, !192, !194, !196, !201, !205, !209, !211, !213, !215, !217, !219, !221, !223, !225, !227, !229, !231, !233, !238, !242, !246, !248, !250, !252, !259, !263, !267, !269, !271, !273, !275, !277, !279, !283, !287, !289, !291, !293, !295, !299, !303, !307, !309, !311, !313, !315, !317, !319, !323, !327, !331, !333, !337, !341, !343, !345, !347, !349, !351, !353, !359}
+!7 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !9, file: !14, line: 52)
+!8 = !DINamespace(name: "std", scope: null)
+!9 = !DISubprogram(name: "abs", scope: !10, file: !10, line: 840, type: !11, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!10 = !DIFile(filename: "/usr/include/stdlib.h", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!11 = !DISubroutineType(types: !12)
+!12 = !{!13, !13}
+!13 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
+!14 = !DIFile(filename: "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/bits/std_abs.h", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!15 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !16, file: !21, line: 83)
+!16 = !DISubprogram(name: "acos", scope: !17, file: !17, line: 53, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!17 = !DIFile(filename: "/usr/include/x86_64-linux-gnu/bits/mathcalls.h", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!18 = !DISubroutineType(types: !19)
+!19 = !{!20, !20}
+!20 = !DIBasicType(name: "double", size: 64, encoding: DW_ATE_float)
+!21 = !DIFile(filename: "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/cmath", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!22 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !23, file: !21, line: 102)
+!23 = !DISubprogram(name: "asin", scope: !17, file: !17, line: 55, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!24 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !25, file: !21, line: 121)
+!25 = !DISubprogram(name: "atan", scope: !17, file: !17, line: 57, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!26 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !27, file: !21, line: 140)
+!27 = !DISubprogram(name: "atan2", scope: !17, file: !17, line: 59, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!28 = !DISubroutineType(types: !29)
+!29 = !{!20, !20, !20}
+!30 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !31, file: !21, line: 161)
+!31 = !DISubprogram(name: "ceil", scope: !17, file: !17, line: 159, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!32 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !33, file: !21, line: 180)
+!33 = !DISubprogram(name: "cos", scope: !17, file: !17, line: 62, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!34 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !35, file: !21, line: 199)
+!35 = !DISubprogram(name: "cosh", scope: !17, file: !17, line: 71, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!36 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !37, file: !21, line: 218)
+!37 = !DISubprogram(name: "exp", scope: !17, file: !17, line: 95, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!38 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !39, file: !21, line: 237)
+!39 = !DISubprogram(name: "fabs", scope: !17, file: !17, line: 162, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!40 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !41, file: !21, line: 256)
+!41 = !DISubprogram(name: "floor", scope: !17, file: !17, line: 165, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!42 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !43, file: !21, line: 275)
+!43 = !DISubprogram(name: "fmod", scope: !17, file: !17, line: 168, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!44 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !45, file: !21, line: 296)
+!45 = !DISubprogram(name: "frexp", scope: !17, file: !17, line: 98, type: !46, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!46 = !DISubroutineType(types: !47)
+!47 = !{!20, !20, !48}
+!48 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !13, size: 64)
+!49 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !50, file: !21, line: 315)
+!50 = !DISubprogram(name: "ldexp", scope: !17, file: !17, line: 101, type: !51, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!51 = !DISubroutineType(types: !52)
+!52 = !{!20, !20, !13}
+!53 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !54, file: !21, line: 334)
+!54 = !DISubprogram(name: "log", scope: !17, file: !17, line: 104, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!55 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !56, file: !21, line: 353)
+!56 = !DISubprogram(name: "log10", scope: !17, file: !17, line: 107, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!57 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !58, file: !21, line: 372)
+!58 = !DISubprogram(name: "modf", scope: !17, file: !17, line: 110, type: !59, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!59 = !DISubroutineType(types: !60)
+!60 = !{!20, !20, !61}
+!61 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !20, size: 64)
+!62 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !63, file: !21, line: 384)
+!63 = !DISubprogram(name: "pow", scope: !17, file: !17, line: 140, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!64 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !65, file: !21, line: 421)
+!65 = !DISubprogram(name: "sin", scope: !17, file: !17, line: 64, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!66 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !67, file: !21, line: 440)
+!67 = !DISubprogram(name: "sinh", scope: !17, file: !17, line: 73, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!68 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !69, file: !21, line: 459)
+!69 = !DISubprogram(name: "sqrt", scope: !17, file: !17, line: 143, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!70 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !71, file: !21, line: 478)
+!71 = !DISubprogram(name: "tan", scope: !17, file: !17, line: 66, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!72 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !73, file: !21, line: 497)
+!73 = !DISubprogram(name: "tanh", scope: !17, file: !17, line: 75, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!74 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !75, file: !21, line: 1065)
+!75 = !DIDerivedType(tag: DW_TAG_typedef, name: "double_t", file: !76, line: 150, baseType: !20)
+!76 = !DIFile(filename: "/usr/include/math.h", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!77 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !78, file: !21, line: 1066)
+!78 = !DIDerivedType(tag: DW_TAG_typedef, name: "float_t", file: !76, line: 149, baseType: !4)
+!79 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !80, file: !21, line: 1069)
+!80 = !DISubprogram(name: "acosh", scope: !17, file: !17, line: 85, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!81 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !82, file: !21, line: 1070)
+!82 = !DISubprogram(name: "acoshf", scope: !17, file: !17, line: 85, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!83 = !DISubroutineType(types: !84)
+!84 = !{!4, !4}
+!85 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !86, file: !21, line: 1071)
+!86 = !DISubprogram(name: "acoshl", scope: !17, file: !17, line: 85, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!87 = !DISubroutineType(types: !88)
+!88 = !{!89, !89}
+!89 = !DIBasicType(name: "long double", size: 128, encoding: DW_ATE_float)
+!90 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !91, file: !21, line: 1073)
+!91 = !DISubprogram(name: "asinh", scope: !17, file: !17, line: 87, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!92 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !93, file: !21, line: 1074)
+!93 = !DISubprogram(name: "asinhf", scope: !17, file: !17, line: 87, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!94 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !95, file: !21, line: 1075)
+!95 = !DISubprogram(name: "asinhl", scope: !17, file: !17, line: 87, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!96 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !97, file: !21, line: 1077)
+!97 = !DISubprogram(name: "atanh", scope: !17, file: !17, line: 89, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!98 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !99, file: !21, line: 1078)
+!99 = !DISubprogram(name: "atanhf", scope: !17, file: !17, line: 89, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!100 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !101, file: !21, line: 1079)
+!101 = !DISubprogram(name: "atanhl", scope: !17, file: !17, line: 89, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!102 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !103, file: !21, line: 1081)
+!103 = !DISubprogram(name: "cbrt", scope: !17, file: !17, line: 152, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!104 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !105, file: !21, line: 1082)
+!105 = !DISubprogram(name: "cbrtf", scope: !17, file: !17, line: 152, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!106 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !107, file: !21, line: 1083)
+!107 = !DISubprogram(name: "cbrtl", scope: !17, file: !17, line: 152, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!108 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !109, file: !21, line: 1085)
+!109 = !DISubprogram(name: "copysign", scope: !17, file: !17, line: 196, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!110 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !111, file: !21, line: 1086)
+!111 = !DISubprogram(name: "copysignf", scope: !17, file: !17, line: 196, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!112 = !DISubroutineType(types: !113)
+!113 = !{!4, !4, !4}
+!114 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !115, file: !21, line: 1087)
+!115 = !DISubprogram(name: "copysignl", scope: !17, file: !17, line: 196, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!116 = !DISubroutineType(types: !117)
+!117 = !{!89, !89, !89}
+!118 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !119, file: !21, line: 1089)
+!119 = !DISubprogram(name: "erf", scope: !17, file: !17, line: 228, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!120 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !121, file: !21, line: 1090)
+!121 = !DISubprogram(name: "erff", scope: !17, file: !17, line: 228, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!122 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !123, file: !21, line: 1091)
+!123 = !DISubprogram(name: "erfl", scope: !17, file: !17, line: 228, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!124 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !125, file: !21, line: 1093)
+!125 = !DISubprogram(name: "erfc", scope: !17, file: !17, line: 229, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!126 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !127, file: !21, line: 1094)
+!127 = !DISubprogram(name: "erfcf", scope: !17, file: !17, line: 229, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!128 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !129, file: !21, line: 1095)
+!129 = !DISubprogram(name: "erfcl", scope: !17, file: !17, line: 229, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!130 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !131, file: !21, line: 1097)
+!131 = !DISubprogram(name: "exp2", scope: !17, file: !17, line: 130, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!132 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !133, file: !21, line: 1098)
+!133 = !DISubprogram(name: "exp2f", scope: !17, file: !17, line: 130, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!134 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !135, file: !21, line: 1099)
+!135 = !DISubprogram(name: "exp2l", scope: !17, file: !17, line: 130, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!136 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !137, file: !21, line: 1101)
+!137 = !DISubprogram(name: "expm1", scope: !17, file: !17, line: 119, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!138 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !139, file: !21, line: 1102)
+!139 = !DISubprogram(name: "expm1f", scope: !17, file: !17, line: 119, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!140 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !141, file: !21, line: 1103)
+!141 = !DISubprogram(name: "expm1l", scope: !17, file: !17, line: 119, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!142 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !143, file: !21, line: 1105)
+!143 = !DISubprogram(name: "fdim", scope: !17, file: !17, line: 326, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!144 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !145, file: !21, line: 1106)
+!145 = !DISubprogram(name: "fdimf", scope: !17, file: !17, line: 326, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!146 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !147, file: !21, line: 1107)
+!147 = !DISubprogram(name: "fdiml", scope: !17, file: !17, line: 326, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!148 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !149, file: !21, line: 1109)
+!149 = !DISubprogram(name: "fma", scope: !17, file: !17, line: 335, type: !150, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!150 = !DISubroutineType(types: !151)
+!151 = !{!20, !20, !20, !20}
+!152 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !153, file: !21, line: 1110)
+!153 = !DISubprogram(name: "fmaf", scope: !17, file: !17, line: 335, type: !154, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!154 = !DISubroutineType(types: !155)
+!155 = !{!4, !4, !4, !4}
+!156 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !157, file: !21, line: 1111)
+!157 = !DISubprogram(name: "fmal", scope: !17, file: !17, line: 335, type: !158, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!158 = !DISubroutineType(types: !159)
+!159 = !{!89, !89, !89, !89}
+!160 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !161, file: !21, line: 1113)
+!161 = !DISubprogram(name: "fmax", scope: !17, file: !17, line: 329, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!162 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !163, file: !21, line: 1114)
+!163 = !DISubprogram(name: "fmaxf", scope: !17, file: !17, line: 329, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!164 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !165, file: !21, line: 1115)
+!165 = !DISubprogram(name: "fmaxl", scope: !17, file: !17, line: 329, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!166 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !167, file: !21, line: 1117)
+!167 = !DISubprogram(name: "fmin", scope: !17, file: !17, line: 332, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!168 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !169, file: !21, line: 1118)
+!169 = !DISubprogram(name: "fminf", scope: !17, file: !17, line: 332, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!170 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !171, file: !21, line: 1119)
+!171 = !DISubprogram(name: "fminl", scope: !17, file: !17, line: 332, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!172 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !173, file: !21, line: 1121)
+!173 = !DISubprogram(name: "hypot", scope: !17, file: !17, line: 147, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!174 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !175, file: !21, line: 1122)
+!175 = !DISubprogram(name: "hypotf", scope: !17, file: !17, line: 147, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!176 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !177, file: !21, line: 1123)
+!177 = !DISubprogram(name: "hypotl", scope: !17, file: !17, line: 147, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!178 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !179, file: !21, line: 1125)
+!179 = !DISubprogram(name: "ilogb", scope: !17, file: !17, line: 280, type: !180, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!180 = !DISubroutineType(types: !181)
+!181 = !{!13, !20}
+!182 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !183, file: !21, line: 1126)
+!183 = !DISubprogram(name: "ilogbf", scope: !17, file: !17, line: 280, type: !184, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!184 = !DISubroutineType(types: !185)
+!185 = !{!13, !4}
+!186 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !187, file: !21, line: 1127)
+!187 = !DISubprogram(name: "ilogbl", scope: !17, file: !17, line: 280, type: !188, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!188 = !DISubroutineType(types: !189)
+!189 = !{!13, !89}
+!190 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !191, file: !21, line: 1129)
+!191 = !DISubprogram(name: "lgamma", scope: !17, file: !17, line: 230, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!192 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !193, file: !21, line: 1130)
+!193 = !DISubprogram(name: "lgammaf", scope: !17, file: !17, line: 230, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!194 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !195, file: !21, line: 1131)
+!195 = !DISubprogram(name: "lgammal", scope: !17, file: !17, line: 230, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!196 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !197, file: !21, line: 1134)
+!197 = !DISubprogram(name: "llrint", scope: !17, file: !17, line: 316, type: !198, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!198 = !DISubroutineType(types: !199)
+!199 = !{!200, !20}
+!200 = !DIBasicType(name: "long long int", size: 64, encoding: DW_ATE_signed)
+!201 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !202, file: !21, line: 1135)
+!202 = !DISubprogram(name: "llrintf", scope: !17, file: !17, line: 316, type: !203, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!203 = !DISubroutineType(types: !204)
+!204 = !{!200, !4}
+!205 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !206, file: !21, line: 1136)
+!206 = !DISubprogram(name: "llrintl", scope: !17, file: !17, line: 316, type: !207, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!207 = !DISubroutineType(types: !208)
+!208 = !{!200, !89}
+!209 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !210, file: !21, line: 1138)
+!210 = !DISubprogram(name: "llround", scope: !17, file: !17, line: 322, type: !198, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!211 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !212, file: !21, line: 1139)
+!212 = !DISubprogram(name: "llroundf", scope: !17, file: !17, line: 322, type: !203, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!213 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !214, file: !21, line: 1140)
+!214 = !DISubprogram(name: "llroundl", scope: !17, file: !17, line: 322, type: !207, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!215 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !216, file: !21, line: 1143)
+!216 = !DISubprogram(name: "log1p", scope: !17, file: !17, line: 122, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!217 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !218, file: !21, line: 1144)
+!218 = !DISubprogram(name: "log1pf", scope: !17, file: !17, line: 122, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!219 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !220, file: !21, line: 1145)
+!220 = !DISubprogram(name: "log1pl", scope: !17, file: !17, line: 122, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!221 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !222, file: !21, line: 1147)
+!222 = !DISubprogram(name: "log2", scope: !17, file: !17, line: 133, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!223 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !224, file: !21, line: 1148)
+!224 = !DISubprogram(name: "log2f", scope: !17, file: !17, line: 133, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!225 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !226, file: !21, line: 1149)
+!226 = !DISubprogram(name: "log2l", scope: !17, file: !17, line: 133, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!227 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !228, file: !21, line: 1151)
+!228 = !DISubprogram(name: "logb", scope: !17, file: !17, line: 125, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!229 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !230, file: !21, line: 1152)
+!230 = !DISubprogram(name: "logbf", scope: !17, file: !17, line: 125, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!231 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !232, file: !21, line: 1153)
+!232 = !DISubprogram(name: "logbl", scope: !17, file: !17, line: 125, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!233 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !234, file: !21, line: 1155)
+!234 = !DISubprogram(name: "lrint", scope: !17, file: !17, line: 314, type: !235, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!235 = !DISubroutineType(types: !236)
+!236 = !{!237, !20}
+!237 = !DIBasicType(name: "long int", size: 64, encoding: DW_ATE_signed)
+!238 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !239, file: !21, line: 1156)
+!239 = !DISubprogram(name: "lrintf", scope: !17, file: !17, line: 314, type: !240, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!240 = !DISubroutineType(types: !241)
+!241 = !{!237, !4}
+!242 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !243, file: !21, line: 1157)
+!243 = !DISubprogram(name: "lrintl", scope: !17, file: !17, line: 314, type: !244, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!244 = !DISubroutineType(types: !245)
+!245 = !{!237, !89}
+!246 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !247, file: !21, line: 1159)
+!247 = !DISubprogram(name: "lround", scope: !17, file: !17, line: 320, type: !235, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!248 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !249, file: !21, line: 1160)
+!249 = !DISubprogram(name: "lroundf", scope: !17, file: !17, line: 320, type: !240, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!250 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !251, file: !21, line: 1161)
+!251 = !DISubprogram(name: "lroundl", scope: !17, file: !17, line: 320, type: !244, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!252 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !253, file: !21, line: 1163)
+!253 = !DISubprogram(name: "nan", scope: !17, file: !17, line: 201, type: !254, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!254 = !DISubroutineType(types: !255)
+!255 = !{!20, !256}
+!256 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !257, size: 64)
+!257 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !258)
+!258 = !DIBasicType(name: "char", size: 8, encoding: DW_ATE_signed_char)
+!259 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !260, file: !21, line: 1164)
+!260 = !DISubprogram(name: "nanf", scope: !17, file: !17, line: 201, type: !261, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!261 = !DISubroutineType(types: !262)
+!262 = !{!4, !256}
+!263 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !264, file: !21, line: 1165)
+!264 = !DISubprogram(name: "nanl", scope: !17, file: !17, line: 201, type: !265, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!265 = !DISubroutineType(types: !266)
+!266 = !{!89, !256}
+!267 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !268, file: !21, line: 1167)
+!268 = !DISubprogram(name: "nearbyint", scope: !17, file: !17, line: 294, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!269 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !270, file: !21, line: 1168)
+!270 = !DISubprogram(name: "nearbyintf", scope: !17, file: !17, line: 294, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!271 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !272, file: !21, line: 1169)
+!272 = !DISubprogram(name: "nearbyintl", scope: !17, file: !17, line: 294, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!273 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !274, file: !21, line: 1171)
+!274 = !DISubprogram(name: "nextafter", scope: !17, file: !17, line: 259, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!275 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !276, file: !21, line: 1172)
+!276 = !DISubprogram(name: "nextafterf", scope: !17, file: !17, line: 259, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!277 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !278, file: !21, line: 1173)
+!278 = !DISubprogram(name: "nextafterl", scope: !17, file: !17, line: 259, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!279 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !280, file: !21, line: 1175)
+!280 = !DISubprogram(name: "nexttoward", scope: !17, file: !17, line: 261, type: !281, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!281 = !DISubroutineType(types: !282)
+!282 = !{!20, !20, !89}
+!283 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !284, file: !21, line: 1176)
+!284 = !DISubprogram(name: "nexttowardf", scope: !17, file: !17, line: 261, type: !285, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!285 = !DISubroutineType(types: !286)
+!286 = !{!4, !4, !89}
+!287 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !288, file: !21, line: 1177)
+!288 = !DISubprogram(name: "nexttowardl", scope: !17, file: !17, line: 261, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!289 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !290, file: !21, line: 1179)
+!290 = !DISubprogram(name: "remainder", scope: !17, file: !17, line: 272, type: !28, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!291 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !292, file: !21, line: 1180)
+!292 = !DISubprogram(name: "remainderf", scope: !17, file: !17, line: 272, type: !112, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!293 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !294, file: !21, line: 1181)
+!294 = !DISubprogram(name: "remainderl", scope: !17, file: !17, line: 272, type: !116, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!295 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !296, file: !21, line: 1183)
+!296 = !DISubprogram(name: "remquo", scope: !17, file: !17, line: 307, type: !297, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!297 = !DISubroutineType(types: !298)
+!298 = !{!20, !20, !20, !48}
+!299 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !300, file: !21, line: 1184)
+!300 = !DISubprogram(name: "remquof", scope: !17, file: !17, line: 307, type: !301, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!301 = !DISubroutineType(types: !302)
+!302 = !{!4, !4, !4, !48}
+!303 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !304, file: !21, line: 1185)
+!304 = !DISubprogram(name: "remquol", scope: !17, file: !17, line: 307, type: !305, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!305 = !DISubroutineType(types: !306)
+!306 = !{!89, !89, !89, !48}
+!307 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !308, file: !21, line: 1187)
+!308 = !DISubprogram(name: "rint", scope: !17, file: !17, line: 256, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!309 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !310, file: !21, line: 1188)
+!310 = !DISubprogram(name: "rintf", scope: !17, file: !17, line: 256, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!311 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !312, file: !21, line: 1189)
+!312 = !DISubprogram(name: "rintl", scope: !17, file: !17, line: 256, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!313 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !314, file: !21, line: 1191)
+!314 = !DISubprogram(name: "round", scope: !17, file: !17, line: 298, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!315 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !316, file: !21, line: 1192)
+!316 = !DISubprogram(name: "roundf", scope: !17, file: !17, line: 298, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!317 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !318, file: !21, line: 1193)
+!318 = !DISubprogram(name: "roundl", scope: !17, file: !17, line: 298, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!319 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !320, file: !21, line: 1195)
+!320 = !DISubprogram(name: "scalbln", scope: !17, file: !17, line: 290, type: !321, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!321 = !DISubroutineType(types: !322)
+!322 = !{!20, !20, !237}
+!323 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !324, file: !21, line: 1196)
+!324 = !DISubprogram(name: "scalblnf", scope: !17, file: !17, line: 290, type: !325, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!325 = !DISubroutineType(types: !326)
+!326 = !{!4, !4, !237}
+!327 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !328, file: !21, line: 1197)
+!328 = !DISubprogram(name: "scalblnl", scope: !17, file: !17, line: 290, type: !329, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!329 = !DISubroutineType(types: !330)
+!330 = !{!89, !89, !237}
+!331 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !332, file: !21, line: 1199)
+!332 = !DISubprogram(name: "scalbn", scope: !17, file: !17, line: 276, type: !51, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!333 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !334, file: !21, line: 1200)
+!334 = !DISubprogram(name: "scalbnf", scope: !17, file: !17, line: 276, type: !335, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!335 = !DISubroutineType(types: !336)
+!336 = !{!4, !4, !13}
+!337 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !338, file: !21, line: 1201)
+!338 = !DISubprogram(name: "scalbnl", scope: !17, file: !17, line: 276, type: !339, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!339 = !DISubroutineType(types: !340)
+!340 = !{!89, !89, !13}
+!341 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !342, file: !21, line: 1203)
+!342 = !DISubprogram(name: "tgamma", scope: !17, file: !17, line: 235, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!343 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !344, file: !21, line: 1204)
+!344 = !DISubprogram(name: "tgammaf", scope: !17, file: !17, line: 235, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!345 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !346, file: !21, line: 1205)
+!346 = !DISubprogram(name: "tgammal", scope: !17, file: !17, line: 235, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!347 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !348, file: !21, line: 1207)
+!348 = !DISubprogram(name: "trunc", scope: !17, file: !17, line: 302, type: !18, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!349 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !350, file: !21, line: 1208)
+!350 = !DISubprogram(name: "truncf", scope: !17, file: !17, line: 302, type: !83, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!351 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !8, entity: !352, file: !21, line: 1209)
+!352 = !DISubprogram(name: "truncl", scope: !17, file: !17, line: 302, type: !87, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!353 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !0, entity: !354, file: !358, line: 38)
+!354 = !DISubprogram(name: "abs", linkageName: "_ZSt3absg", scope: !8, file: !14, line: 103, type: !355, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!355 = !DISubroutineType(types: !356)
+!356 = !{!357, !357}
+!357 = !DIBasicType(name: "__float128", size: 128, encoding: DW_ATE_float)
+!358 = !DIFile(filename: "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/math.h", directory: "/home/yingj4/Desktop/cs598jtfa20/project/audio_pipeline")
+!359 = !DIImportedEntity(tag: DW_TAG_imported_declaration, scope: !0, entity: !360, file: !358, line: 54)
+!360 = !DISubprogram(name: "modf", linkageName: "_ZSt4modfePe", scope: !8, file: !21, line: 380, type: !361, isLocal: false, isDefinition: false, flags: DIFlagPrototyped, isOptimized: true)
+!361 = !DISubroutineType(types: !362)
+!362 = !{!89, !89, !363}
+!363 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !89, size: 64)
+!364 = !{i32 2, !"Dwarf Version", i32 4}
+!365 = !{i32 2, !"Debug Info Version", i32 3}
+!366 = !{i32 1, !"wchar_size", i32 4}
+!367 = !{!"clang version 6.0.1 "}
+!368 = distinct !DISubprogram(name: "DegreesToRadians", linkageName: "_Z16DegreesToRadiansf", scope: !1, file: !1, line: 17, type: !83, isLocal: false, isDefinition: true, scopeLine: 18, flags: DIFlagPrototyped, isOptimized: true, unit: !0, variables: !369)
+!369 = !{!370}
+!370 = !DILocalVariable(name: "fDegrees", arg: 1, scope: !368, file: !1, line: 17, type: !4)
+!371 = !DILocation(line: 17, column: 30, scope: !368)
+!372 = !DILocation(line: 19, column: 21, scope: !368)
+!373 = !DILocation(line: 19, column: 35, scope: !368)
+!374 = !DILocation(line: 19, column: 5, scope: !368)
+!375 = distinct !DISubprogram(name: "RadiansToDegrees", linkageName: "_Z16RadiansToDegreesf", scope: !1, file: !1, line: 22, type: !83, isLocal: false, isDefinition: true, scopeLine: 23, flags: DIFlagPrototyped, isOptimized: true, unit: !0, variables: !376)
+!376 = !{!377}
+!377 = !DILocalVariable(name: "fRadians", arg: 1, scope: !375, file: !1, line: 22, type: !4)
+!378 = !DILocation(line: 22, column: 30, scope: !375)
+!379 = !DILocation(line: 24, column: 21, scope: !375)
+!380 = !DILocation(line: 24, column: 29, scope: !375)
+!381 = !DILocation(line: 24, column: 5, scope: !375)
+!382 = distinct !DISubprogram(name: "OrderToComponents", linkageName: "_Z17OrderToComponentsjb", scope: !1, file: !1, line: 27, type: !383, isLocal: false, isDefinition: true, scopeLine: 28, flags: DIFlagPrototyped, isOptimized: true, unit: !0, variables: !386)
+!383 = !DISubroutineType(types: !384)
+!384 = !{!5, !5, !385}
+!385 = !DIBasicType(name: "bool", size: 8, encoding: DW_ATE_boolean)
+!386 = !{!387, !388}
+!387 = !DILocalVariable(name: "nOrder", arg: 1, scope: !382, file: !1, line: 27, type: !5)
+!388 = !DILocalVariable(name: "b3D", arg: 2, scope: !382, file: !1, line: 27, type: !385)
+!389 = !DILocation(line: 27, column: 37, scope: !382)
+!390 = !DILocation(line: 27, column: 50, scope: !382)
+!391 = !DILocation(line: 29, column: 8, scope: !382)
+!392 = !DILocation(line: 30, column: 32, scope: !393)
+!393 = distinct !DILexicalBlock(scope: !382, file: !1, line: 29, column: 8)
+!394 = !DILocation(line: 30, column: 39, scope: !393)
+!395 = !DILocation(line: 30, column: 27, scope: !393)
+!396 = !DILocation(line: 30, column: 9, scope: !393)
+!397 = !DILocation(line: 32, column: 23, scope: !393)
+!398 = !DILocation(line: 32, column: 27, scope: !393)
+!399 = !DILocation(line: 32, column: 9, scope: !393)
+!400 = !DILocation(line: 33, column: 1, scope: !382)
+!401 = distinct !DISubprogram(name: "OrderToComponentPosition", linkageName: "_Z24OrderToComponentPositionjb", scope: !1, file: !1, line: 35, type: !383, isLocal: false, isDefinition: true, scopeLine: 36, flags: DIFlagPrototyped, isOptimized: true, unit: !0, variables: !402)
+!402 = !{!403, !404, !405}
+!403 = !DILocalVariable(name: "nOrder", arg: 1, scope: !401, file: !1, line: 35, type: !5)
+!404 = !DILocalVariable(name: "b3D", arg: 2, scope: !401, file: !1, line: 35, type: !385)
+!405 = !DILocalVariable(name: "nIndex", scope: !401, file: !1, line: 39, type: !5)
+!406 = !DILocation(line: 35, column: 44, scope: !401)
+!407 = !DILocation(line: 35, column: 57, scope: !401)
+!408 = !DILocation(line: 39, column: 14, scope: !401)
+!409 = !DILocation(line: 41, column: 8, scope: !401)
+!410 = !DILocation(line: 43, column: 9, scope: !411)
+!411 = distinct !DILexicalBlock(scope: !412, file: !1, line: 42, column: 5)
+!412 = distinct !DILexicalBlock(scope: !401, file: !1, line: 41, column: 8)
+!413 = !DILocation(line: 53, column: 9, scope: !414)
+!414 = distinct !DILexicalBlock(scope: !412, file: !1, line: 52, column: 5)
+!415 = !DILocation(line: 62, column: 5, scope: !401)
+!416 = distinct !DISubprogram(name: "OrderToSpeakers", linkageName: "_Z15OrderToSpeakersjb", scope: !1, file: !1, line: 65, type: !383, isLocal: false, isDefinition: true, scopeLine: 66, flags: DIFlagPrototyped, isOptimized: true, unit: !0, variables: !417)
+!417 = !{!418, !419}
+!418 = !DILocalVariable(name: "nOrder", arg: 1, scope: !416, file: !1, line: 65, type: !5)
+!419 = !DILocalVariable(name: "b3D", arg: 2, scope: !416, file: !1, line: 65, type: !385)
+!420 = !DILocation(line: 65, column: 35, scope: !416)
+!421 = !DILocation(line: 65, column: 48, scope: !416)
+!422 = !DILocation(line: 68, column: 8, scope: !416)
+!423 = !DILocation(line: 72, column: 1, scope: !416)
+!424 = distinct !DISubprogram(name: "ComponentToChannelLabel", linkageName: "_Z23ComponentToChannelLabeljb", scope: !1, file: !1, line: 74, type: !425, isLocal: false, isDefinition: true, scopeLine: 75, flags: DIFlagPrototyped, isOptimized: true, unit: !0, variables: !427)
+!425 = !DISubroutineType(types: !426)
+!426 = !{!258, !5, !385}
+!427 = !{!428, !429, !430}
+!428 = !DILocalVariable(name: "nComponent", arg: 1, scope: !424, file: !1, line: 74, type: !5)
+!429 = !DILocalVariable(name: "b3D", arg: 2, scope: !424, file: !1, line: 74, type: !385)
+!430 = !DILocalVariable(name: "cLabel", scope: !424, file: !1, line: 77, type: !258)
+!431 = !DILocation(line: 74, column: 39, scope: !424)
+!432 = !DILocation(line: 74, column: 56, scope: !424)
+!433 = !DILocation(line: 77, column: 10, scope: !424)
+!434 = !DILocation(line: 78, column: 8, scope: !424)
+!435 = !DILocation(line: 80, column: 9, scope: !436)
+!436 = distinct !DILexicalBlock(scope: !437, file: !1, line: 79, column: 5)
+!437 = distinct !DILexicalBlock(scope: !424, file: !1, line: 78, column: 8)
+!438 = !DILocation(line: 102, column: 9, scope: !439)
+!439 = distinct !DILexicalBlock(scope: !437, file: !1, line: 101, column: 5)
+!440 = !DILocation(line: 114, column: 5, scope: !424)

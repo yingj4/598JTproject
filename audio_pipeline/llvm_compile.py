@@ -24,13 +24,13 @@ def main (directory, source):
 
   source_file = source + '.cpp'
   # os.system('%s/bin/get-labeled-stmts triad.c -- -I%s/lib/clang/3.4' % (TRACER_HOME, LLVM_HOME))
-  os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include -I./include -I./libspatialaudio/build/Release/include/spatialaudio' % (TRACER_HOME, LLVM_HOME))
+  os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include -I./include -I./libspatialaudio/build/Release/include/spatialaudio/' % (TRACER_HOME, LLVM_HOME))
   # os.system('clang -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
   #           ' -fno-unroll-loops -fno-inline -fno-builtin -emit-llvm -o ' + \
   #           obj + ' '  + source_file)
   os.system(('%s/bin/clang++ -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
             ' -fno-unroll-loops -fno-inline -emit-llvm -o ' + \
-            obj + ' '  + source_file) % (LLVM_HOME))
+            obj + ' '  + source_file + '-I./libspatialaudio/build/Release/include/spatialaudio/ -I./include') % (LLVM_HOME))
   # os.system('opt -disable-inlining -S -load=' + TRACER_HOME + \
   #           '/lib/full_trace.so -fulltrace -labelmapwriter ' + obj + ' -o ' + opt_obj)
   os.system(('%s/bin/opt -disable-inlining -S -load=' + TRACER_HOME + \
