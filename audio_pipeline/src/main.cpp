@@ -1985,6 +1985,7 @@ void CAmbisonicEncoder::Process(float* pfSrc, unsigned nSamples, CBFormat* pfDst
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
+    // printf("Encoder::Process\n");
 loopEproc:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < nSamples; niSample++)
