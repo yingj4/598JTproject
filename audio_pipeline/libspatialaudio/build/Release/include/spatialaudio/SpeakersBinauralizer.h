@@ -24,7 +24,7 @@ public:
 
     void Process(float** pBFSrc, float** ppfDst);
 
-protected:
+// protected:
     unsigned m_nSpeakers;
 
     virtual void AllocateBuffers();

@@ -46,7 +46,7 @@ public:
     */
     float GetDirectivity();
 
-protected:
+// protected:
     float m_fDirectivity;
 };
 

@@ -64,7 +64,7 @@ public:
     */
     void Process(CBFormat* pBFSrc, float** ppfDst);
 
-protected:
+// protected:
     CAmbisonicDecoder m_AmbDecoder;
 
     unsigned m_nBlockSize;

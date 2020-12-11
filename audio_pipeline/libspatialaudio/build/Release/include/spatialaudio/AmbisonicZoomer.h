@@ -63,7 +63,7 @@ public:
         Compute factorial of integer
     */
     float factorial(unsigned M);
-protected:
+// protected:
     CAmbisonicDecoder m_AmbDecoderFront;
 
     std::unique_ptr<float[]> m_AmbEncoderFront;

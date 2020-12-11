@@ -15,7 +15,7 @@ public:
     bool isLoaded() { return i_len != 0; }
     unsigned getHRTFLen() { return i_len; }
 
-protected:
+// protected:
     unsigned i_sampleRate;
     unsigned i_len;
 };

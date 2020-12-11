@@ -110,7 +110,7 @@ public:
     */
     void SetCoefficient(unsigned nSpeaker, unsigned nChannel, float fCoeff);
 
-protected:
+// protected:
     void SpeakerSetUp(int nSpeakerSetUp, unsigned nSpeakers = 1);
 
     int m_nSpeakerSetUp;

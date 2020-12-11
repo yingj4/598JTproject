@@ -889,7 +889,7 @@ unsigned int mit_hrtf_get(int* pAzimuth, int* pElevation, unsigned int samplerat
 
     return nTotalTaps;
 }
-}
+
 
 
 int mit_hrtf_findAzimuthFor40Elev(int azimuth)
@@ -1017,6 +1017,7 @@ int mit_hrtf_findIndexFor40Elev(int azimuth)
     else
         return 28;
 }
+}
 
 // MIT_HRTF
 MIT_HRTF::MIT_HRTF(unsigned i_sampleRate)
@@ -1048,6 +1049,7 @@ bool MIT_HRTF::get(float f_azimuth, float f_elevation, float** pfHRTF)
     return true;
 }
 
+// extern "C" {
 // AmbisonicCommons
 float DegreesToRadians(float fDegrees)
 {
@@ -1148,6 +1150,7 @@ char ComponentToChannelLabel(unsigned nComponent, bool b3D)
 
     return cLabel;
 }
+// }
 
 // CAmbisonicBase
 CAmbisonicBase::CAmbisonicBase()
@@ -1260,7 +1263,7 @@ CBFormat& CBFormat::operator += (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopAa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1275,7 +1278,7 @@ CBFormat& CBFormat::operator -= (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopNa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1290,7 +1293,7 @@ CBFormat& CBFormat::operator *= (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopMa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1305,7 +1308,7 @@ CBFormat& CBFormat::operator /= (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopDa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1320,7 +1323,7 @@ CBFormat& CBFormat::operator += (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopAb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1335,7 +1338,7 @@ CBFormat& CBFormat::operator -= (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopNb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1350,7 +1353,7 @@ CBFormat& CBFormat::operator *= (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopMb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -1365,7 +1368,7 @@ CBFormat& CBFormat::operator /= (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-loopDb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -2068,8 +2071,8 @@ void CAmbisonicEncoderDist::Refresh()
     }
 }
 
-void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* pfDst)
-{
+extern "C" {
+void encoderDistProcess(CAmbisonicEncoderDist* ed, float* pfSrc, unsigned nSamples, CBFormat* pfDst) {
     unsigned niChannel = 0;
     unsigned niSample = 0;
     float fSrcSample = 0;
@@ -2077,23 +2080,53 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
 loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
     {
         //Store
-        m_pfDelayBuffer[m_nIn] = pfSrc[niSample];
+        ed->m_pfDelayBuffer[ed->m_nIn] = pfSrc[niSample];
         //Read
-        fSrcSample = m_pfDelayBuffer[m_nOutA] * (1.f - m_fDelay)
-                    + m_pfDelayBuffer[m_nOutB] * m_fDelay;
+        fSrcSample = ed->m_pfDelayBuffer[ed->m_nOutA] * (1.f - ed->m_fDelay)
+                    + ed->m_pfDelayBuffer[ed->m_nOutB] * ed->m_fDelay;
 
-        pfDst->m_ppfChannels[kW][niSample] = fSrcSample * m_fInteriorGain * m_pfCoeff[kW];
+        pfDst->m_ppfChannels[kW][niSample] = fSrcSample * ed->m_fInteriorGain * ed->m_pfCoeff[kW];
 
-        fSrcSample *= m_fExteriorGain;
-        for(niChannel = 1; niChannel < m_nChannelCount; niChannel++)
+        fSrcSample *= ed->m_fExteriorGain;
+        for(niChannel = 1; niChannel < ed->m_nChannelCount; niChannel++)
         {
-            pfDst->m_ppfChannels[niChannel][niSample] = fSrcSample * m_pfCoeff[niChannel];
+            pfDst->m_ppfChannels[niChannel][niSample] = fSrcSample * ed->m_pfCoeff[niChannel];
         }
 
-        m_nIn = (m_nIn + 1) % m_nDelayBufferLength;
-        m_nOutA = (m_nOutA + 1) % m_nDelayBufferLength;
-        m_nOutB = (m_nOutB + 1) % m_nDelayBufferLength;
+        ed->m_nIn = (ed->m_nIn + 1) % ed->m_nDelayBufferLength;
+        ed->m_nOutA = (ed->m_nOutA + 1) % ed->m_nDelayBufferLength;
+        ed->m_nOutB = (ed->m_nOutB + 1) % ed->m_nDelayBufferLength;
     }
+}
+}
+
+void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* pfDst)
+{
+//     unsigned niChannel = 0;
+//     unsigned niSample = 0;
+//     float fSrcSample = 0;
+
+// loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
+//     {
+//         //Store
+//         m_pfDelayBuffer[m_nIn] = pfSrc[niSample];
+//         //Read
+//         fSrcSample = m_pfDelayBuffer[m_nOutA] * (1.f - m_fDelay)
+//                     + m_pfDelayBuffer[m_nOutB] * m_fDelay;
+
+//         pfDst->m_ppfChannels[kW][niSample] = fSrcSample * m_fInteriorGain * m_pfCoeff[kW];
+
+//         fSrcSample *= m_fExteriorGain;
+//         for(niChannel = 1; niChannel < m_nChannelCount; niChannel++)
+//         {
+//             pfDst->m_ppfChannels[niChannel][niSample] = fSrcSample * m_pfCoeff[niChannel];
+//         }
+
+//         m_nIn = (m_nIn + 1) % m_nDelayBufferLength;
+//         m_nOutA = (m_nOutA + 1) % m_nDelayBufferLength;
+//         m_nOutB = (m_nOutB + 1) % m_nDelayBufferLength;
+//     }
+    encoderDistProcess(this, pfSrc, nSamples, pfDst);
 }
 
 void CAmbisonicEncoderDist::SetRoomRadius(float fRoomRadius)

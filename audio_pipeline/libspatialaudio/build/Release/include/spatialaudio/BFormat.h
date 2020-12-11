@@ -78,7 +78,7 @@ public:
     CBFormat& operator *= (const float &fValue);
     CBFormat& operator /= (const float &fValue);
 
-protected:
+// protected:
     unsigned m_nSamples;
     unsigned m_nDataLength;
     std::vector<float> m_pfData;
