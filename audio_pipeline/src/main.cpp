@@ -2154,7 +2154,7 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
 //         m_nOutB = (m_nOutB + 1) % m_nDelayBufferLength;
 //     }
 //     encoderDistProcess(this, pfSrc, nSamples, pfDst);
-    encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff.data(), m_fExteriorGain, m_nDelayBufferLength, pfDst->m_ppfChannels, nSamples, m_fDelay, m_nChannelCount);
+    encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff.data(), m_fExteriorGain, m_nDelayBufferLength, pfDst->m_ppfChannels.get(), nSamples, m_fDelay, m_nChannelCount);
 }
 
 void CAmbisonicEncoderDist::SetRoomRadius(float fRoomRadius)
