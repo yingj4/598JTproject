@@ -1775,8 +1775,9 @@ void CAmbisonicProcessor::ProcessOrder3_2D(CBFormat* pBFSrcDst, unsigned nSample
 }
 */
 
-void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSamples)
-{
+extern "C" {
+void processorFilter(float* m_pfScratchBufferA, unsigned m_nFFTSize, unsigned m_nChannelCount, float* tempChannels, unsigned m_nBlockSize, unsigned m_nFFTSize, kiss_fftr_cfg m_pFFT_psych_cfg, kiss_fft_cpx* m_pcpScratch,\
+                     kiss_fftr_cfg m_pIFFT_psych_cfg, unsigned nSamples, float m_fFFTScaler, kiss_fft_cpx* m_ppcpPsychFilters, unsigned m_nFFTBins, unsigned m_nOverlapLength, float* m_pfOverlap) {
     kiss_fft_cpx cpTemp;
 
     unsigned iChannelOrder = 0;
@@ -1791,28 +1792,106 @@ loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++
 
         iChannelOrder = int(sqrt(niChannel));    //get the order of the current channel
 
-        memcpy(m_pfScratchBufferA, pBFSrcDst->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
+        memcpy(m_pfScratchBufferA, &tempChannels[niChannel * nSamples], m_nBlockSize * sizeof(float));
         memset(&m_pfScratchBufferA[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
         kiss_fftr(m_pFFT_psych_cfg, m_pfScratchBufferA, m_pcpScratch);
         // Perform the convolution in the frequency domain
         for(unsigned ni = 0; ni < m_nFFTBins; ni++)
         {
-            cpTemp.r = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder][ni].r
-                        - m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder][ni].i;
-            cpTemp.i = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder][ni].i
-                        + m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder][ni].r;
+            cpTemp.r = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder * m_nFFTBins + ni].r
+                        - m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder * m_nFFTBins + ni].i;
+            cpTemp.i = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder * m_nFFTBins + ni].i
+                        + m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder * m_nFFTBins + ni].r;
             m_pcpScratch[ni] = cpTemp;
         }
         // Convert from frequency domain back to time domain
         kiss_fftri(m_pIFFT_psych_cfg, m_pcpScratch, m_pfScratchBufferA);
         for(unsigned ni = 0; ni < m_nFFTSize; ni++)
             m_pfScratchBufferA[ni] *= m_fFFTScaler;
-                memcpy(pBFSrcDst->m_ppfChannels[niChannel], m_pfScratchBufferA, m_nBlockSize * sizeof(float));
+        memcpy(&tempChannels[niChannel * nSamples], m_pfScratchBufferA, m_nBlockSize * sizeof(float));
         for(unsigned ni = 0; ni < m_nOverlapLength; ni++)
-                {
-                        pBFSrcDst->m_ppfChannels[niChannel][ni] += m_pfOverlap[niChannel][ni];
-                }
-                memcpy(m_pfOverlap[niChannel], &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
+        {
+            tempChannels[niChannel * nSamples + ni] += m_pfOverlap[niChannel * m_nOverlapLength + ni];
+        }
+        memcpy(&m_pfOverlap[niChannel * m_nOverlapLength], &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
+    }
+}
+}
+
+void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSamples)
+{
+//     kiss_fft_cpx cpTemp;
+
+//     unsigned iChannelOrder = 0;
+
+//     // Filter the Ambisonics channels
+//     // All  channels are filtered using linear phase FIR filters.
+//     // In the case of the 0th order signal (W channel) this takes the form of a delay
+//     // For all other channels shelf filters are used
+//     memset(m_pfScratchBufferA, 0, m_nFFTSize * sizeof(float));
+// loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+//     {
+
+//         iChannelOrder = int(sqrt(niChannel));    //get the order of the current channel
+
+//         memcpy(m_pfScratchBufferA, pBFSrcDst->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
+//         memset(&m_pfScratchBufferA[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
+//         kiss_fftr(m_pFFT_psych_cfg, m_pfScratchBufferA, m_pcpScratch);
+//         // Perform the convolution in the frequency domain
+//         for(unsigned ni = 0; ni < m_nFFTBins; ni++)
+//         {
+//             cpTemp.r = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder][ni].r
+//                         - m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder][ni].i;
+//             cpTemp.i = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder][ni].i
+//                         + m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder][ni].r;
+//             m_pcpScratch[ni] = cpTemp;
+//         }
+//         // Convert from frequency domain back to time domain
+//         kiss_fftri(m_pIFFT_psych_cfg, m_pcpScratch, m_pfScratchBufferA);
+//         for(unsigned ni = 0; ni < m_nFFTSize; ni++)
+//             m_pfScratchBufferA[ni] *= m_fFFTScaler;
+//                 memcpy(pBFSrcDst->m_ppfChannels[niChannel], m_pfScratchBufferA, m_nBlockSize * sizeof(float));
+//         for(unsigned ni = 0; ni < m_nOverlapLength; ni++)
+//                 {
+//                         pBFSrcDst->m_ppfChannels[niChannel][ni] += m_pfOverlap[niChannel][ni];
+//                 }
+//                 memcpy(m_pfOverlap[niChannel], &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
+//     }
+    float tempChannels[m_nChannelCount * nSamples];
+    float tempOverlap[m_nChannelCount * m_nOverlapLength];
+    kiss_fft_cpx tempPsychoFilter[(m_nOrder + 1) * m_nFFTBins];
+
+    for (unsigned j = 0 ; j < m_nChannelCount; ++j) {
+        for (unsigned i = 0; i < nSamples; ++i) {
+            pfDst->m_ppfChannels[j][i] = tempChannels[j * nSamples + i];
+        }
+    }
+
+    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++) {
+        for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
+            tempOverlap[niChannel * m_nOverlapLength + ni] = m_pfOverlap[niChannel][ni];
+        }
+    }
+
+    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++) {
+        unsigned iChannelOrder = int(sqrt(niChannel));
+        for(unsigned ni = 0; ni < m_nFFTBins; ni++) {
+            tempPsychoFilter[iChannelOrder * m_nFFTBins + ni] = m_ppcpPsychFilters[iChannelOrder][ni];
+        }
+    }
+
+    processorFilter(m_pfScratchBufferA, m_nFFTSize, m_nChannelCount, tempChannels, m_nBlockSize, m_nFFTSize, m_pFFT_psych_cfg, m_pcpScratch, m_pIFFT_psych_cfg, nSamples, m_fFFTScaler, m_ppcpPsychFilters, m_nFFTBins, m_nOverlapLength, m_pfOverlap);
+
+    for (unsigned j = 0 ; j < m_nChannelCount; ++j) {
+        for (unsigned i = 0; i < nSamples; ++i) {
+            tempChannels[j * nSamples + i] = pfDst->m_ppfChannels[j][i];
+        }
+    }
+
+    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++) {
+        for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
+            m_pfOverlap[niChannel][ni] = m_pfOverlap[niChannel * m_nOverlapLength + ni];
+        }
     }
 }
 
@@ -2099,7 +2178,8 @@ extern "C" {
 //     }
 // }
 
-void encoderDistProcess(float* m_pfDelayBuffer, float* pfSrc, int m_nIn, int m_nOutA, int m_nOutB, float m_fInteriorGain, float* m_pfCoeff, float m_fExteriorGain, unsigned m_nDelayBufferLength, float* tempChannels, unsigned nSamples, float m_fDelay, unsigned m_nChannelCount) {
+void encoderDistProcess(float* m_pfDelayBuffer, float* pfSrc, int m_nIn, int m_nOutA, int m_nOutB, float m_fInteriorGain, float* m_pfCoeff, float m_fExteriorGain,\
+                        unsigned m_nDelayBufferLength, float* tempChannels, unsigned nSamples, float m_fDelay, unsigned m_nChannelCount) {
     unsigned niChannel = 0;
     unsigned niSample = 0;
     float fSrcSample = 0;
@@ -3132,7 +3212,7 @@ CBFormat* ILLIXR_AUDIO::Sound::readInBFormat(){
     short sampleTemp[BLOCK_SIZE];
     srcFile->read((char*)sampleTemp, BLOCK_SIZE * sizeof(short));
     // normalize samples to -1 to 1 float, with amplitude scale
-    loopSound: for (int i = 0; i < BLOCK_SIZE; ++i){
+    for (int i = 0; i < BLOCK_SIZE; ++i){
         sample[i] = amp * (sampleTemp[i] / 32767.0);
     }
     BEncoder->Process(sample, BLOCK_SIZE, BFormat);
