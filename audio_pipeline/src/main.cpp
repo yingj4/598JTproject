@@ -2157,7 +2157,11 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
 //     }
 //     encoderDistProcess(this, pfSrc, nSamples, pfDst);
     float tempChannels[m_nChannelCount * nSamples];
-    encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff.data(), m_fExteriorGain, m_nDelayBufferLength, tempChannels, nSamples, m_fDelay, m_nChannelCount);
+    float tempCoeff[m_pfCoeff.size()];
+    for (int i = 0 ; i < m_pfCoeff.size(); ++i) {
+        tempCoeff[i] = m_pfCoeff[i];
+    }
+    encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, tempCoeff, m_fExteriorGain, m_nDelayBufferLength, tempChannels, nSamples, m_fDelay, m_nChannelCount);
     for (int j = 0 ; j < m_nChannelCount; ++j) {
         for (int i = 0; i < nSamples; ++i) {
             pfDst->m_ppfChannels[j][i] = tempChannels[j * nSamples + i];
