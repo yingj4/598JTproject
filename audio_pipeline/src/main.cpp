@@ -2099,7 +2099,7 @@ extern "C" {
 //     }
 // }
 
-void encoderDistProcess(float* m_pfDelayBuffer, float* pfSrc, int m_nIn, int m_nOutA, int m_nOutB, float m_fInteriorGain, float* m_pfCoeff, float m_fExteriorGain, unsigned m_nDelayBufferLength, float** m_ppfChannels, unsigned nSamples, float m_fDelay, unsigned m_nChannelCount) {
+void encoderDistProcess(float* m_pfDelayBuffer, float* pfSrc, int m_nIn, int m_nOutA, int m_nOutB, float m_fInteriorGain, float* m_pfCoeff, float m_fExteriorGain, unsigned m_nDelayBufferLength, float* tempChannels, unsigned nSamples, float m_fDelay, unsigned m_nChannelCount) {
     unsigned niChannel = 0;
     unsigned niSample = 0;
     float fSrcSample = 0;
@@ -2112,12 +2112,14 @@ loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
         fSrcSample = m_pfDelayBuffer[m_nOutA] * (1.f - m_fDelay)
                     + m_pfDelayBuffer[m_nOutB] * m_fDelay;
 
-        m_ppfChannels[kW][niSample] = fSrcSample * m_fInteriorGain * m_pfCoeff[kW];
+        // m_ppfChannels[kW][niSample] = fSrcSample * m_fInteriorGain * m_pfCoeff[kW];
+        tempChannels[niSample] = fSrcSample * m_fInteriorGain * m_pfCoeff[kW];
 
         fSrcSample *= m_fExteriorGain;
         for(niChannel = 1; niChannel < m_nChannelCount; niChannel++)
         {
-            m_ppfChannels[niChannel][niSample] = fSrcSample * m_pfCoeff[niChannel];
+            // m_ppfChannels[niChannel][niSample] = fSrcSample * m_pfCoeff[niChannel];
+            tempChannels[niChannel * nSamples + niSample] = fSrcSample * m_pfCoeff[niChannel];
         }
 
         m_nIn = (m_nIn + 1) % m_nDelayBufferLength;
@@ -2154,7 +2156,13 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
 //         m_nOutB = (m_nOutB + 1) % m_nDelayBufferLength;
 //     }
 //     encoderDistProcess(this, pfSrc, nSamples, pfDst);
-    encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff.data(), m_fExteriorGain, m_nDelayBufferLength, pfDst->m_ppfChannels.get(), nSamples, m_fDelay, m_nChannelCount);
+    float tempChannels[m_nChannelCount * nSamples];
+    encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff.data(), m_fExteriorGain, m_nDelayBufferLength, tempChannels, nSamples, m_fDelay, m_nChannelCount);
+    for (int j = 0 ; j < m_nChannelCount; ++j) {
+        for (int i = 0; i < nSamples; ++i) {
+            pfDst[j][i] = tempChannels[j * nSamples + i];
+        }
+    }
 }
 
 void CAmbisonicEncoderDist::SetRoomRadius(float fRoomRadius)
