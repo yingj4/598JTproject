@@ -2160,7 +2160,7 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
     encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff.data(), m_fExteriorGain, m_nDelayBufferLength, tempChannels, nSamples, m_fDelay, m_nChannelCount);
     for (int j = 0 ; j < m_nChannelCount; ++j) {
         for (int i = 0; i < nSamples; ++i) {
-            pfDst[j][i] = tempChannels[j * nSamples + i];
+            pfDst->m_ppfChannels[j][i] = tempChannels[j * nSamples + i];
         }
     }
 }
