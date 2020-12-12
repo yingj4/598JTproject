@@ -24,7 +24,7 @@ namespace ILLIXR_AUDIO{
 		void setSrcAmp(float ampScale);
 		// read sound samples from mono 16bit WAV file and encode into ambisonics format
 		CBFormat* readInBFormat();		
-	private:
+	// private:
 		// corresponding sound src file
 		std::fstream* srcFile;
 		// sample buffer HARDCODE

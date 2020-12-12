@@ -21,7 +21,7 @@ namespace ILLIXR_AUDIO{
 		void processBlock();
 		// Load sound source files (predefined)
 		void loadSource();
-	private:
+	// private:
 		ProcessType processType;
 		// a list of sound sources in this audio
 		std::vector<Sound*>* soundSrcs;

@@ -2072,7 +2072,34 @@ void CAmbisonicEncoderDist::Refresh()
 }
 
 extern "C" {
-void encoderDistProcess(CAmbisonicEncoderDist* ed, float* pfSrc, unsigned nSamples, CBFormat* pfDst) {
+// void encoderDistProcess(CAmbisonicEncoderDist* ed, float* pfSrc, unsigned nSamples, CBFormat* pfDst) {
+//     unsigned niChannel = 0;
+//     unsigned niSample = 0;
+//     float fSrcSample = 0;
+
+// loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
+//     {
+//         //Store
+//         ed->m_pfDelayBuffer[ed->m_nIn] = pfSrc[niSample];
+//         //Read
+//         fSrcSample = ed->m_pfDelayBuffer[ed->m_nOutA] * (1.f - ed->m_fDelay)
+//                     + ed->m_pfDelayBuffer[ed->m_nOutB] * ed->m_fDelay;
+
+//         pfDst->m_ppfChannels[kW][niSample] = fSrcSample * ed->m_fInteriorGain * ed->m_pfCoeff[kW];
+
+//         fSrcSample *= ed->m_fExteriorGain;
+//         for(niChannel = 1; niChannel < ed->m_nChannelCount; niChannel++)
+//         {
+//             pfDst->m_ppfChannels[niChannel][niSample] = fSrcSample * ed->m_pfCoeff[niChannel];
+//         }
+
+//         ed->m_nIn = (ed->m_nIn + 1) % ed->m_nDelayBufferLength;
+//         ed->m_nOutA = (ed->m_nOutA + 1) % ed->m_nDelayBufferLength;
+//         ed->m_nOutB = (ed->m_nOutB + 1) % ed->m_nDelayBufferLength;
+//     }
+// }
+
+void encoderDistProcess(float* m_pfDelayBuffer, float* pfSrc, int m_nIn, int m_nOutA, int m_nOutB, float m_fInteriorGain, float* m_pfCoeff, float m_fExteriorGain, unsigned m_nDelayBufferLength, float** m_ppfChannels, unsigned nSamples, float m_fDelay, unsigned m_nChannelCount) {
     unsigned niChannel = 0;
     unsigned niSample = 0;
     float fSrcSample = 0;
@@ -2080,22 +2107,22 @@ void encoderDistProcess(CAmbisonicEncoderDist* ed, float* pfSrc, unsigned nSampl
 loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
     {
         //Store
-        ed->m_pfDelayBuffer[ed->m_nIn] = pfSrc[niSample];
+        m_pfDelayBuffer[m_nIn] = pfSrc[niSample];
         //Read
-        fSrcSample = ed->m_pfDelayBuffer[ed->m_nOutA] * (1.f - ed->m_fDelay)
-                    + ed->m_pfDelayBuffer[ed->m_nOutB] * ed->m_fDelay;
+        fSrcSample = m_pfDelayBuffer[m_nOutA] * (1.f - m_fDelay)
+                    + m_pfDelayBuffer[m_nOutB] * m_fDelay;
 
-        pfDst->m_ppfChannels[kW][niSample] = fSrcSample * ed->m_fInteriorGain * ed->m_pfCoeff[kW];
+        m_ppfChannels[kW][niSample] = fSrcSample * m_fInteriorGain * m_pfCoeff[kW];
 
-        fSrcSample *= ed->m_fExteriorGain;
-        for(niChannel = 1; niChannel < ed->m_nChannelCount; niChannel++)
+        fSrcSample *= m_fExteriorGain;
+        for(niChannel = 1; niChannel < m_nChannelCount; niChannel++)
         {
-            pfDst->m_ppfChannels[niChannel][niSample] = fSrcSample * ed->m_pfCoeff[niChannel];
+            m_ppfChannels[niChannel][niSample] = fSrcSample * m_pfCoeff[niChannel];
         }
 
-        ed->m_nIn = (ed->m_nIn + 1) % ed->m_nDelayBufferLength;
-        ed->m_nOutA = (ed->m_nOutA + 1) % ed->m_nDelayBufferLength;
-        ed->m_nOutB = (ed->m_nOutB + 1) % ed->m_nDelayBufferLength;
+        m_nIn = (m_nIn + 1) % m_nDelayBufferLength;
+        m_nOutA = (m_nOutA + 1) % m_nDelayBufferLength;
+        m_nOutB = (m_nOutB + 1) % m_nDelayBufferLength;
     }
 }
 }
@@ -2126,7 +2153,8 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
 //         m_nOutA = (m_nOutA + 1) % m_nDelayBufferLength;
 //         m_nOutB = (m_nOutB + 1) % m_nDelayBufferLength;
 //     }
-    encoderDistProcess(this, pfSrc, nSamples, pfDst);
+//     encoderDistProcess(this, pfSrc, nSamples, pfDst);
+    encoderDistProcess(m_pfDelayBuffer, floatpfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, m_pfCoeff, m_fExteriorGain, m_nDelayBufferLength, pfDst->m_ppfChannels, nSamples, m_fDelay, m_nChannelCount);
 }
 
 void CAmbisonicEncoderDist::SetRoomRadius(float fRoomRadius)
