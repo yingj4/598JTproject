@@ -3283,8 +3283,8 @@ void CAmbisonicBinauralizer::Refresh()
 
 extern "C" {
 void binauralizerProcess(float* m_pfScratchBufferA, unsigned m_nFFTSize, unsigned m_nChannelCount, float* m_pfScratchBufferB, \
-                         unsigned m_nBlockSize, kiss_fftf_cfg m_pFFT_cfg, kiss_fft_cpx* m_pcpScratch, unsigned m_nFFTBins, kiss_fft_cpx* m_ppcpFilters, \
-                         kiss_fftf_cfg m_pIFFT_cfg, unsigned m_nOverlapLength, float* m_pfOverlap, float* tempChannels, unsigned nSamples, float* ppfDst, float m_fFFTScalar) {
+                         unsigned m_nBlockSize, kiss_fftr_cfg m_pFFT_cfg, kiss_fft_cpx* m_pcpScratch, unsigned m_nFFTBins, kiss_fft_cpx* m_ppcpFilters, \
+                         kiss_fftr_cfg m_pIFFT_cfg, unsigned m_nOverlapLength, float* m_pfOverlap, float* tempChannels, unsigned nSamples, float* ppfDst, float m_fFFTScaler) {
     unsigned niEar = 0;
     unsigned niChannel = 0;
     unsigned ni = 0;
@@ -3430,8 +3430,8 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
     float tempBufferA[m_nFFTSize];
     float tempBufferB[m_nFFTSize];
     float tempChannels[m_nChannelCount * BLOCK_SIZE];
-    kiss_fftf_cfg tempFFT_cfg;
-    kiss_fftf_cfg tempIFFT_cfg;
+    kiss_fftr_cfg tempFFT_cfg;
+    kiss_fftr_cfg tempIFFT_cfg;
     kiss_fft_cpx tempScratch[m_nFFTBins];
     kiss_fft_cpx tempFilters[2 * m_nChannelCount * m_nFFTBins];
     float tempDst[2 * BLOCK_SIZE];
@@ -3443,7 +3443,7 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
 
     for (unsigned niEar = 0; niEar < 2; niEar++) {
         for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
-            tempDst[niEar * nSamples + ni] = ppfDst[niEar][ni];
+            tempDst[niEar * BLOCK_SIZE + ni] = ppfDst[niEar][ni];
         }
     }
 
@@ -3466,11 +3466,11 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
 
     binauralizerProcess(tempBufferA, m_nFFTSize, m_nChannelCount,  tempBufferB, \
                          m_nBlockSize, tempFFT_cfg, kiss_fft_cpx* m_pcpScratch, m_nFFTBins, m_ppcpFilters, \
-                         tempIFFT_cfg, m_nOverlapLength, tempOverlap, tempChannels, BLOCK_SIZE, tempDst, m_fFFTScalar);
+                         tempIFFT_cfg, m_nOverlapLength, tempOverlap, tempChannels, BLOCK_SIZE, tempDst, m_fFFTScaler);
 
     for (unsigned niEar = 0; niEar < 2; niEar++) {
         for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
-            ppfDst[niEar][ni] = tempDst[niEar * nSamples + ni];
+            ppfDst[niEar][ni] = tempDst[niEar * BLOCK_SIZE + ni];
         }
     }
 
