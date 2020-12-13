@@ -1630,10 +1630,10 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
 //         pBFSrcDst->m_ppfChannels[kY][niSample] = m_pfTempSample[kY];
 //         pBFSrcDst->m_ppfChannels[kZ][niSample] = m_pfTempSample[kZ];
 //     }
-    float tempChannels[m_nChannelCounts * nSamples];
+    float tempChannels[m_nChannelCount * nSamples];
     for (unsigned niSample = 0; niSample < nSamples; niSample++) {
         tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kX][niSample];
-        tempChannels[kY][niSample] = pBFSrcDst->m_ppfChannels[kY][niSample];
+        tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kY][niSample];
         tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kZ][niSample];
     }
 
@@ -1641,7 +1641,7 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
 
     for (unsigned niSample = 0; niSample < nSamples; niSample++) {
         pBFSrcDst->m_ppfChannels[kX][niSample] = tempChannels[nSamples * 2 + niSample];
-        pBFSrcDst->m_ppfChannels[kY][niSample] = tempChannels[kY][niSample];
+        pBFSrcDst->m_ppfChannels[kY][niSample] = tempChannels[niSample];
         pBFSrcDst->m_ppfChannels[kZ][niSample] = tempChannels[nSamples + niSample];
     }
 }
