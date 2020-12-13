@@ -1635,6 +1635,7 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
         tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kY][niSample];
         tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kZ][niSample];
     }
+    std::cout << std::endl;
     std::cout << "size of tempChannels: " << 3 * nSamples * sizeof(float) << std::endl;
     processOrder1(tempChannels, nSamples, m_fSinAlpha, m_fCosAlpha, m_fCosBeta, m_fSinBeta, m_fSinGamma, m_fCosGamma);
 
@@ -1759,6 +1760,7 @@ void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSample
         tempChannels[nSamples * 4 + niSample] = pBFSrcDst->m_ppfChannels[kU][niSample];
         tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kV][niSample];
     }
+    std::cout << std::endl;
     std::cout << "size of tempChannels: " << 5 * nSamples * sizeof(float) << std::endl;
     processOrder2(tempChannels, nSamples, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, m_fCosAlpha, m_fSinBeta, m_fCosBeta, m_fCos2Beta, m_fSin2Gamma, m_fCos2Gamma, m_fCosGamma, m_fSinGamma);
 
@@ -1936,6 +1938,7 @@ void CAmbisonicProcessor::ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSample
         tempChannels[nSamples * 5 + niSample] = m_pfTempSample[kN];
         tempChannels[nSamples * 6 + niSample] = m_pfTempSample[kP];
     }
+    std::cout << std::endl;
     std::cout << "size of tempChannels: " << 7 * nSamples * sizeof(float) << std::endl;
     processOrder3(tempChannels, nSamples, m_fSin3Alpha, m_fCos3Alpha, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, \
                    m_fCosAlpha, m_fCos2Beta, m_fCosBeta, m_fSinBeta, m_fSin3Beta, m_fCos3Beta, m_fSin3Gamma, \
@@ -2103,6 +2106,7 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
             tempPsychoFilter[iChannelOrder * m_nFFTBins + ni] = m_ppcpPsychFilters[iChannelOrder][ni];
         }
     }
+    std::cout << std::endl;
     std::cout << "size of m_pfScratchBufferA: " << m_nFFTSize * sizeof(float) << std::endl;
     std::cout << "size of tempChannels: " << m_nChannelCount * nSamples * sizeof(float) << std::endl;
     std::cout << "size of m_pfOverlap: " << m_nChannelCount * m_nOverlapLength * sizeof(float) << std::endl;
@@ -2470,6 +2474,7 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
     for (int i = 0 ; i < m_pfCoeff.size(); ++i) {
         tempCoeff[i] = m_pfCoeff[i];
     }
+    std::cout << std::endl;
     std::cout << "size of m_pfDelayBuffer: " << m_nDelayBufferLength * sizeof(float) << std::endl;
     std::cout << "size of pfSrc: " << 1024 * sizeof(float) << std::endl;
     std::cout << "size of m_pfCoeff: " << m_pfCoeff.size() * sizeof(float) << std::endl;
@@ -3101,6 +3106,7 @@ void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
     for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
         tempAmbEncoderFront[iChannel] = m_AmbEncoderFront[iChannel];
     }
+    std::cout << std::endl;
     std::cout << "size of tempChannels is: "<< m_nChannelCount * nSamples * sizeof(float) << std::endl;
     std::cout << "size of m_AmbEncoderFront_weighted is: "<< m_nChannelCount * sizeof(float) << std::endl;
     std::cout << "size of m_AmbEncoderFront is: "<< m_nChannelCount * sizeof(float) << std::endl;
@@ -3482,6 +3488,7 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
     tempFFT_cfg = m_pFFT_cfg.get();
     tempIFFT_cfg = m_pIFFT_cfg.get();
 
+    std::endl;
     std::cout << "size of m_pfScratchBufferA is: "<< m_nFFTSize * sizeof(float) << std::endl;
     std::cout << "size of m_pfScratchBufferB is: "<< m_nFFTSize * sizeof(float) << std::endl;
     std::cout << "size of m_pcpScratch is: "<< m_nFFTBins * sizeof(kiss_fft_cpx) << std::endl;
