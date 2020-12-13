@@ -1880,7 +1880,7 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
         }
     }
 
-    processorFilter(m_pfScratchBufferA, m_nFFTSize, m_nChannelCount, tempChannels, m_nBlockSize, m_pFFT_psych_cfg, m_pcpScratch, m_pIFFT_psych_cfg, nSamples, m_fFFTScaler, m_ppcpPsychFilters, m_nFFTBins, m_nOverlapLength, m_pfOverlap);
+    processorFilter(m_pfScratchBufferA, m_nFFTSize, m_nChannelCount, tempChannels, m_nBlockSize, m_pFFT_psych_cfg, m_pcpScratch, m_pIFFT_psych_cfg, nSamples, m_fFFTScaler, tempPsychoFilter, m_nFFTBins, m_nOverlapLength, tempOverlap);
 
     for (unsigned j = 0 ; j < m_nChannelCount; ++j) {
         for (unsigned i = 0; i < nSamples; ++i) {
