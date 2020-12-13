@@ -1,4 +1,4 @@
-# Loop Labels and Their Classes
+# Loop Labels and Their Function Calls
 
 This file contains the loop labels and their function calls. The first column indicates whether it is encoding or decoding, the second column indicates their function calls, the third column shows the loop names, and the fourth column tells whether we should do unrolling or pipelining (U or P).
 
