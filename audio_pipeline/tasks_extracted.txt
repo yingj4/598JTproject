@@ -7,7 +7,7 @@ _ZN8CBFormatpLERKf
 _ZN8CBFormatmIERKf
 _ZN8CBFormatdVERKf
 
-_ZN17CAmbisonicEncoder7ProcessEPfjP8CBFormat
+_ZN17CAmbisonicEncoder7ProcessEPfjP8CBFormat					not used
 
 _ZN21CAmbisonicEncoderDist7ProcessEPfjP8CBFormat				v
 
@@ -17,9 +17,9 @@ _ZN19CAmbisonicProcessor16ProcessOrder2_3DEP8CBFormatj				v
 _ZN19CAmbisonicProcessor16ProcessOrder3_3DEP8CBFormatj				v
 _ZN19CAmbisonicProcessor9ConfigureEjbjj
 
-_ZN17CAmbisonicSpeaker7ProcessEP8CBFormatjPf
+_ZN17CAmbisonicSpeaker7ProcessEP8CBFormatjPf					not used
 
-_ZN16CAmbisonicZoomer7ProcessEP8CBFormatj
+_ZN16CAmbisonicZoomer7ProcessEP8CBFormatj					v
 
 _ZN22CAmbisonicBinauralizer7ProcessEP8CBFormatPPf
 _ZN22CAmbisonicBinauralizer9ConfigureEjbjjRjSs
