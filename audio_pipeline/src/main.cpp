@@ -1648,7 +1648,7 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
 
 extern "C" {
 void processOrder2(float* tempChannels, unsigned nSamples, float m_fSin2Alpha, float m_fCos2Alpha, float m_fSinAlpha, float m_fCosAlpha, \
-                   float m_fSinBeta, float m_fCosBeta, float m_fCos2Beta, float m_fSin2Gamma, float m_fCos2Gamma) {
+                   float m_fSinBeta, float m_fCosBeta, float m_fCos2Beta, float m_fSin2Gamma, float m_fCos2Gamma, float m_fCosGamma, float m_fSinGamma) {
     float fSqrt3 = sqrt(3.f);
 
     loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
@@ -1665,7 +1665,7 @@ void processOrder2(float* tempChannels, unsigned nSamples, float m_fSin2Alpha, f
                             + tempChannels[niSample] * m_fSin2Alpha;
 
         // Beta rotation
-        tempChannels[kVniSample] = -m_fSinBeta * tempT
+        tempChannels[niSample] = -m_fSinBeta * tempT
                                         + m_fCosBeta * tempV;
         tempChannels[nSamples + niSample] = -m_fCosBeta * tempT
                                         + m_fSinBeta * tempV;
@@ -1760,7 +1760,7 @@ void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSample
         tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kV][niSample];
     }
 
-    processOrder2(tempChannels, nSamples, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, m_fCosAlpha, m_fSinBeta, m_fCosBeta, m_fCos2Beta, m_fSin2Gamma, m_fCos2Gamma);
+    processOrder2(tempChannels, nSamples, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, m_fCosAlpha, m_fSinBeta, m_fCosBeta, m_fCos2Beta, m_fSin2Gamma, m_fCos2Gamma, m_fCosGamma, m_fSinGamma);
 
     for (unsigned niSample = 0; niSample < nSamples; niSample++) {
         pBFSrcDst->m_ppfChannels[kR][niSample] = tempChannels[nSamples * 2 + niSample];
@@ -1819,7 +1819,7 @@ void processOrder3(float* tempChannels, unsigned nSamples, float m_fSin3Alpha, f
                     + 0.25f * fSqrt3_2 * tempP * (3.f + m_fCos2Beta) * m_fSinBeta
                     + 0.5f * fSqrt15 * tempK * m_fCosBeta * pow(m_fSinBeta,2.f)
                     + 0.125 * fSqrt5_2 * tempL * (m_fSinBeta - 3.f * m_fSin3Beta);
-        tempChannels[knSamples * 6 + niSample] = 0.0625f * tempP * (15.f * m_fCosBeta + m_fCos3Beta)
+        tempChannels[nSamples * 6 + niSample] = 0.0625f * tempP * (15.f * m_fCosBeta + m_fCos3Beta)
                     - 0.25f * fSqrt3_2 * tempN * (3.f + m_fCos2Beta) * m_fSinBeta
                     + 0.25f * fSqrt15 * tempL * m_fCosBeta * pow(m_fSinBeta,2.f)
                     - 0.5 * fSqrt5_2 * tempK * pow(m_fSinBeta,3.f);
@@ -1830,7 +1830,7 @@ void processOrder3(float* tempChannels, unsigned nSamples, float m_fSin3Alpha, f
         tempO = - tempChannels[nSamples * 5 + niSample] * m_fSin2Gamma
                             + tempChannels[nSamples + niSample] * m_fCos2Gamma;
         tempM = - tempChannels[nSamples * 4 + niSample] * m_fSinGamma
-                            + ptempChannels[nSamples * 2 + niSample] * m_fCosGamma;
+                            + tempChannels[nSamples * 2 + niSample] * m_fCosGamma;
         tempK = tempChannels[nSamples * 3 + niSample];
         tempL = tempChannels[nSamples * 4 + niSample] * m_fCosGamma
                             + tempChannels[nSamples * 2 + niSample] * m_fSinGamma;
@@ -1839,13 +1839,13 @@ void processOrder3(float* tempChannels, unsigned nSamples, float m_fSin3Alpha, f
         tempP = tempChannels[nSamples * 6 + niSample] * m_fCos3Gamma
                             + tempChannels[niSample] * m_fSin3Gamma;
 
-        tempChannels[kQ][niSample] = tempQ;
-        tempChannels[kO][niSample] = tempO;
-        tempChannels[kM][niSample] = tempM;
-        tempChannels[kK][niSample] = tempK;
-        tempChannels[kL][niSample] = tempL;
-        tempChannels[kN][niSample] = tempN;
-        tempChannels[kP][niSample] = tempP;
+        tempChannels[niSample] = tempQ;
+        tempChannels[nSamples + niSample] = tempO;
+        tempChannels[nSamples * 2 + niSample] = tempM;
+        tempChannels[nSamples * 3 + niSample] = tempK;
+        tempChannels[nSamples * 4 + niSample] = tempL;
+        tempChannels[nSamples * 5 + niSample] = tempN;
+        tempChannels[nSamples * 6 + niSample] = tempP;
     }
 }
 }
@@ -1927,13 +1927,13 @@ void CAmbisonicProcessor::ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSample
     float tempChannels[7 * nSamples];
 
     for (unsigned niSample = 0; niSample < nSamples; niSample++) {
-        tempChannels[niSamples] = m_pfTempSample[kQ];
-        tempChannels[nSamples + niSamples] = m_pfTempSample[kO];
-        tempChannels[nSamples * 2 + niSamples] = m_pfTempSample[kM];
-        tempChannels[nSamples * 3 + niSamples] = m_pfTempSample[kK];
-        tempChannels[nSamples * 4 + niSamples] = m_pfTempSample[kL];
-        tempChannels[nSamples * 5 + niSamples] = m_pfTempSample[kN];
-        tempChannels[nSamples * 6 + niSamples] = m_pfTempSample[kP];
+        tempChannels[niSample] = m_pfTempSample[kQ];
+        tempChannels[nSamples + niSample] = m_pfTempSample[kO];
+        tempChannels[nSamples * 2 + niSample] = m_pfTempSample[kM];
+        tempChannels[nSamples * 3 + niSample] = m_pfTempSample[kK];
+        tempChannels[nSamples * 4 + niSample] = m_pfTempSample[kL];
+        tempChannels[nSamples * 5 + niSample] = m_pfTempSample[kN];
+        tempChannels[nSamples * 6 + niSample] = m_pfTempSample[kP];
     }
 
     processOrder3(tempChannels, nSamples, m_fSin3Alpha, m_fCos3Alpha, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, \
@@ -1941,13 +1941,13 @@ void CAmbisonicProcessor::ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSample
                    m_fCos3Gamma, m_fSin2Gamma, m_fCos2Gamma, m_fSinGamma, m_fCosGamma);
 
     for (unsigned niSample = 0; niSample < nSamples; niSample++) {
-        m_pfTempSample[kQ] = tempChannels[niSamples];
-        m_pfTempSample[kO] = tempChannels[nSamples + niSamples];
-        m_pfTempSample[kM] = tempChannels[nSamples * 2 + niSamples];
-        m_pfTempSample[kK] = tempChannels[nSamples * 3 + niSamples];
-        m_pfTempSample[kL] = tempChannels[nSamples * 4 + niSamples];
-        m_pfTempSample[kN] = tempChannels[nSamples * 5 + niSamples];
-        m_pfTempSample[kP] = tempChannels[nSamples * 6 + niSamples];
+        m_pfTempSample[kQ] = tempChannels[niSample];
+        m_pfTempSample[kO] = tempChannels[nSamples + niSample];
+        m_pfTempSample[kM] = tempChannels[nSamples * 2 + niSample];
+        m_pfTempSample[kK] = tempChannels[nSamples * 3 + niSample];
+        m_pfTempSample[kL] = tempChannels[nSamples * 4 + niSample];
+        m_pfTempSample[kN] = tempChannels[nSamples * 5 + niSample];
+        m_pfTempSample[kP] = tempChannels[nSamples * 6 + niSample];
     }
 }
 
