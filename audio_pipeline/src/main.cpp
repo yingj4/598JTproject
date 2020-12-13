@@ -1049,7 +1049,6 @@ bool MIT_HRTF::get(float f_azimuth, float f_elevation, float** pfHRTF)
     return true;
 }
 
-// extern "C" {
 // AmbisonicCommons
 float DegreesToRadians(float fDegrees)
 {
@@ -1150,7 +1149,6 @@ char ComponentToChannelLabel(unsigned nComponent, bool b3D)
 
     return cLabel;
 }
-// }
 
 // CAmbisonicBase
 CAmbisonicBase::CAmbisonicBase()
@@ -3170,7 +3168,7 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
     for(niEar = 0; niEar < 2; niEar++)
     {
         ppfAccumulator[niEar] = new float*[m_nChannelCount];
-        loopBconf4: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
             ppfAccumulator[niEar][niChannel] = new float[m_nTaps]();
     }
 
@@ -3221,12 +3219,12 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
 
     float* pfLeftEar90;
     pfLeftEar90 = new float[m_nTaps]();
-    loopBconf7: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
-        loopBconf8: for(niTap = 0; niTap < m_nTaps; niTap++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+        for(niTap = 0; niTap < m_nTaps; niTap++)
             pfLeftEar90[niTap] += myEncoder.GetCoefficient(niChannel) * ppfAccumulator[0][niChannel][niTap];
 
     //Find the maximum value for a source encoded at 90degrees
-    loopBconf9: for(niTap = 0; niTap < m_nTaps; niTap++)
+    for(niTap = 0; niTap < m_nTaps; niTap++)
     {
         float val = fabs(pfLeftEar90[niTap]);
         fMax = val > fMax ? val : fMax;
@@ -3283,107 +3281,202 @@ void CAmbisonicBinauralizer::Refresh()
 
 }
 
-void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
-                                     float** ppfDst)
-{
+extern "C" {
+void binauralizerProcess(float* m_pfScratchBufferA, unsigned m_nFFTSize, unsigned m_nChannelCount, float* m_pfScratchBufferB, \
+                         unsigned m_nBlockSize, kiss_fftf_cfg m_pFFT_cfg, kiss_fft_cpx* m_pcpScratch, unsigned m_nFFTBins, kiss_fft_cpx* m_ppcpFilters, \
+                         kiss_fftf_cfg m_pIFFT_cfg, unsigned m_nOverlapLength, float* m_pfOverlap, float* tempChannels, unsigned nSamples, float* ppfDst, float m_fFFTScalar) {
     unsigned niEar = 0;
     unsigned niChannel = 0;
     unsigned ni = 0;
     kiss_fft_cpx cpTemp;
-
-
-    /* If CPU load needs to be reduced then perform the convolution for each of the Ambisonics/spherical harmonic
-    decompositions of the loudspeakers HRTFs for the left ear. For the left ear the results of these convolutions
-    are summed to give the ear signal. For the right ear signal, the properties of the spherical harmonic decomposition
-    can be use to to create the ear signal. This is done by either adding or subtracting the correct channels.
-    Channels 1, 4, 5, 9, 10 and 11 are subtracted from the accumulated signal. All others are added.
-    For example, for a first order signal the ears are generated from:
-        SignalL = W x HRTF_W + Y x HRTF_Y + Z x HRTF_Z + X x HRTF_X
-        SignalR = W x HRTF_W - Y x HRTF_Y + Z x HRTF_Z + X x HRTF_X
-    where 'x' is a convolution, W/Y/Z/X are the Ambisonic signal channels and HRTF_x are the spherical harmonic
-    decompositions of the virtual loudspeaker array HRTFs.
-    This has the effect of assuming a completel symmetric head. */
-
-    /* TODO: This bool flag should be either an automatic or user option depending on CPU. It should be 'true' if
-    CPU load needs to be limited */
-    bool bLowCPU = false;
-    if(bLowCPU){
-        // Perform the convolutions for the left ear and generate the right ear from a modified accumulation of these channels
-        niEar = 0;
-        memset(m_pfScratchBufferA.data(), 0, m_nFFTSize * sizeof(float));
-        memset(m_pfScratchBufferC.data(), 0, m_nFFTSize * sizeof(float));
-        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+// TODO: update the code to match the inputs
+loopBproc1:    for(niEar = 0; niEar < 2; niEar++)
+    {
+        memset(m_pfScratchBufferA, 0, m_nFFTSize * sizeof(float));
+loopBproc2:        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
         {
-            memcpy(m_pfScratchBufferB.data(), pBFSrc->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
+            memcpy(m_pfScratchBufferB, &tempChannels[niChannel * nSamples], m_nBlockSize * sizeof(float));
             memset(&m_pfScratchBufferB[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
-            kiss_fftr(m_pFFT_cfg.get(), m_pfScratchBufferB.data(), m_pcpScratch.get());
-            for(ni = 0; ni < m_nFFTBins; ni++)
+            kiss_fftr(m_pFFT_cfg, m_pfScratchBufferB, m_pcpScratch);
+loopBproc3:            for(ni = 0; ni < m_nFFTBins; ni++)
             {
-                cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].r
-                            - m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].i;
-                cpTemp.i = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].i
-                            + m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].r;
+                cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar * m_nChannelCount * m_nFFTBins + niChannel * m_nFFTBins + ni].r
+                            - m_pcpScratch[ni].i * m_ppcpFilters[niEar * m_nChannelCount * m_nFFTBins + niChannel * m_nFFTBins + ni].i;
+                cpTemp.i = m_pcpScratch[ni].r * m_ppcpFilters[niEar * m_nChannelCount * m_nFFTBins + niChannel * m_nFFTBins + ni].i
+                            + m_pcpScratch[ni].i * m_ppcpFilters[niEar * m_nChannelCount * m_nFFTBins + niChannel * m_nFFTBins + ni].r;
                 m_pcpScratch[ni] = cpTemp;
             }
-            kiss_fftri(m_pIFFT_cfg.get(), m_pcpScratch.get(), m_pfScratchBufferB.data());
-            for(ni = 0; ni < m_nFFTSize; ni++)
+            kiss_fftri(m_pIFFT_cfg, m_pcpScratch, m_pfScratchBufferB);
+loopBproc4:            for(ni = 0; ni < m_nFFTSize; ni++) {
                 m_pfScratchBufferA[ni] += m_pfScratchBufferB[ni];
-
-            for(ni = 0; ni < m_nFFTSize; ni++){
-                // Subtract certain channels (such as Y) to generate right ear.
-                if((niChannel==1) || (niChannel==4) || (niChannel==5) ||
-                    (niChannel==9) || (niChannel==10)|| (niChannel==11))
-                {
-                    m_pfScratchBufferC[ni] -= m_pfScratchBufferB[ni];
-                }
-                else{
-                    m_pfScratchBufferC[ni] += m_pfScratchBufferB[ni];
-                }
             }
+                
         }
-        for(ni = 0; ni < m_nFFTSize; ni++){
+loopBproc5:        for(ni = 0; ni < m_nFFTSize; ni++) {
             m_pfScratchBufferA[ni] *= m_fFFTScaler;
-            m_pfScratchBufferC[ni] *= m_fFFTScaler;
         }
-        memcpy(ppfDst[0], m_pfScratchBufferA.data(), m_nBlockSize * sizeof(float));
-        memcpy(ppfDst[1], m_pfScratchBufferC.data(), m_nBlockSize * sizeof(float));
-        for(ni = 0; ni < m_nOverlapLength; ni++){
-            ppfDst[0][ni] += m_pfOverlap[0][ni];
-            ppfDst[1][ni] += m_pfOverlap[1][ni];
+        memcpy(&ppfDst[niEar * nSamples], m_pfScratchBufferA, m_nBlockSize * sizeof(float));
+loopBproc6:        for(ni = 0; ni < m_nOverlapLength; ni++) {
+            ppfDst[niEar * nSamples + ni] += m_pfOverlap[niEar * m_nOverlapLength + ni];
         }
-        memcpy(m_pfOverlap[0].data(), &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
-        memcpy(m_pfOverlap[1].data(), &m_pfScratchBufferC[m_nBlockSize], m_nOverlapLength * sizeof(float));
+        memcpy(&m_pfOverlap[niEar * m_nOverlapLength], &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
     }
-    else
-    {
-        // Perform the convolution on both ears. Potentially more realistic results but requires double the number of
-        // convolutions.
-        loopBproc1: for(niEar = 0; niEar < 2; niEar++)
-        {
-            memset(m_pfScratchBufferA.data(), 0, m_nFFTSize * sizeof(float));
-            loopBproc2: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
-            {
-                memcpy(m_pfScratchBufferB.data(), pBFSrc->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
-                memset(&m_pfScratchBufferB[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
-                kiss_fftr(m_pFFT_cfg.get(), m_pfScratchBufferB.data(), m_pcpScratch.get());
-                loopBproc3: for(ni = 0; ni < m_nFFTBins; ni++)
-                {
-                    cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].r
-                                - m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].i;
-                    cpTemp.i = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].i
-                                + m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].r;
-                    m_pcpScratch[ni] = cpTemp;
-                }
-                kiss_fftri(m_pIFFT_cfg.get(), m_pcpScratch.get(), m_pfScratchBufferB.data());
-                loopBproc4: for(ni = 0; ni < m_nFFTSize; ni++)
-                    m_pfScratchBufferA[ni] += m_pfScratchBufferB[ni];
+}
+}
+
+void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
+                                     float** ppfDst)
+{
+//     unsigned niEar = 0;
+//     unsigned niChannel = 0;
+//     unsigned ni = 0;
+//     kiss_fft_cpx cpTemp;
+
+
+//     /* If CPU load needs to be reduced then perform the convolution for each of the Ambisonics/spherical harmonic
+//     decompositions of the loudspeakers HRTFs for the left ear. For the left ear the results of these convolutions
+//     are summed to give the ear signal. For the right ear signal, the properties of the spherical harmonic decomposition
+//     can be use to to create the ear signal. This is done by either adding or subtracting the correct channels.
+//     Channels 1, 4, 5, 9, 10 and 11 are subtracted from the accumulated signal. All others are added.
+//     For example, for a first order signal the ears are generated from:
+//         SignalL = W x HRTF_W + Y x HRTF_Y + Z x HRTF_Z + X x HRTF_X
+//         SignalR = W x HRTF_W - Y x HRTF_Y + Z x HRTF_Z + X x HRTF_X
+//     where 'x' is a convolution, W/Y/Z/X are the Ambisonic signal channels and HRTF_x are the spherical harmonic
+//     decompositions of the virtual loudspeaker array HRTFs.
+//     This has the effect of assuming a completel symmetric head. */
+
+//     /* TODO: This bool flag should be either an automatic or user option depending on CPU. It should be 'true' if
+//     CPU load needs to be limited */
+//     bool bLowCPU = false;
+//     if(bLowCPU){
+//         // Perform the convolutions for the left ear and generate the right ear from a modified accumulation of these channels
+//         niEar = 0;
+//         memset(m_pfScratchBufferA.data(), 0, m_nFFTSize * sizeof(float));
+//         memset(m_pfScratchBufferC.data(), 0, m_nFFTSize * sizeof(float));
+//         for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+//         {
+//             memcpy(m_pfScratchBufferB.data(), pBFSrc->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
+//             memset(&m_pfScratchBufferB[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
+//             kiss_fftr(m_pFFT_cfg.get(), m_pfScratchBufferB.data(), m_pcpScratch.get());
+//             for(ni = 0; ni < m_nFFTBins; ni++)
+//             {
+//                 cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].r
+//                             - m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].i;
+//                 cpTemp.i = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].i
+//                             + m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].r;
+//                 m_pcpScratch[ni] = cpTemp;
+//             }
+//             kiss_fftri(m_pIFFT_cfg.get(), m_pcpScratch.get(), m_pfScratchBufferB.data());
+//             for(ni = 0; ni < m_nFFTSize; ni++)
+//                 m_pfScratchBufferA[ni] += m_pfScratchBufferB[ni];
+
+//             for(ni = 0; ni < m_nFFTSize; ni++){
+//                 // Subtract certain channels (such as Y) to generate right ear.
+//                 if((niChannel==1) || (niChannel==4) || (niChannel==5) ||
+//                     (niChannel==9) || (niChannel==10)|| (niChannel==11))
+//                 {
+//                     m_pfScratchBufferC[ni] -= m_pfScratchBufferB[ni];
+//                 }
+//                 else{
+//                     m_pfScratchBufferC[ni] += m_pfScratchBufferB[ni];
+//                 }
+//             }
+//         }
+//         for(ni = 0; ni < m_nFFTSize; ni++){
+//             m_pfScratchBufferA[ni] *= m_fFFTScaler;
+//             m_pfScratchBufferC[ni] *= m_fFFTScaler;
+//         }
+//         memcpy(ppfDst[0], m_pfScratchBufferA.data(), m_nBlockSize * sizeof(float));
+//         memcpy(ppfDst[1], m_pfScratchBufferC.data(), m_nBlockSize * sizeof(float));
+//         for(ni = 0; ni < m_nOverlapLength; ni++){
+//             ppfDst[0][ni] += m_pfOverlap[0][ni];
+//             ppfDst[1][ni] += m_pfOverlap[1][ni];
+//         }
+//         memcpy(m_pfOverlap[0].data(), &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
+//         memcpy(m_pfOverlap[1].data(), &m_pfScratchBufferC[m_nBlockSize], m_nOverlapLength * sizeof(float));
+//     }
+//     else
+//     {
+//         // Perform the convolution on both ears. Potentially more realistic results but requires double the number of
+//         // convolutions.
+// loopBproc1:        for(niEar = 0; niEar < 2; niEar++)
+//         {
+//             memset(m_pfScratchBufferA.data(), 0, m_nFFTSize * sizeof(float));
+// loopBproc2:            for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+//             {
+//                 memcpy(m_pfScratchBufferB.data(), pBFSrc->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
+//                 memset(&m_pfScratchBufferB[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
+//                 kiss_fftr(m_pFFT_cfg.get(), m_pfScratchBufferB.data(), m_pcpScratch.get());
+// loopBproc3:                for(ni = 0; ni < m_nFFTBins; ni++)
+//                 {
+//                     cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].r
+//                                 - m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].i;
+//                     cpTemp.i = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].i
+//                                 + m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].r;
+//                     m_pcpScratch[ni] = cpTemp;
+//                 }
+//                 kiss_fftri(m_pIFFT_cfg.get(), m_pcpScratch.get(), m_pfScratchBufferB.data());
+// loopBproc4:                for(ni = 0; ni < m_nFFTSize; ni++)
+//                     m_pfScratchBufferA[ni] += m_pfScratchBufferB[ni];
+//             }
+// loopBproc5:            for(ni = 0; ni < m_nFFTSize; ni++)
+//                 m_pfScratchBufferA[ni] *= m_fFFTScaler;
+//             memcpy(ppfDst[niEar], m_pfScratchBufferA.data(), m_nBlockSize * sizeof(float));
+// loopBproc6:            for(ni = 0; ni < m_nOverlapLength; ni++)
+//                 ppfDst[niEar][ni] += m_pfOverlap[niEar][ni];
+//             memcpy(m_pfOverlap[niEar].data(), &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
+//         }
+//     }
+    float tempBufferA[m_nFFTSize];
+    float tempBufferB[m_nFFTSize];
+    float tempChannels[m_nChannelCount * BLOCK_SIZE];
+    kiss_fftf_cfg tempFFT_cfg;
+    kiss_fftf_cfg tempIFFT_cfg;
+    kiss_fft_cpx tempScratch[m_nFFTBins];
+    kiss_fft_cpx tempFilters[2 * m_nChannelCount * m_nFFTBins];
+    float tempDst[2 * BLOCK_SIZE];
+    float tempOverlap[2 * m_nOverlapLength];
+
+    for (unsigned ni = 0; ni < m_nFFTBins; ni++) {
+        tempScratch[ni] = m_pcpScratch[ni];
+    }
+
+    for (unsigned niEar = 0; niEar < 2; niEar++) {
+        for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
+            tempDst[niEar * nSamples + ni] = ppfDst[niEar][ni];
+        }
+    }
+
+    for (unsigned niEar = 0; niEar < 2; niEar++) {
+        for (unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++) {
+            for(unsigned ni = 0; ni < m_nFFTBins; ni++) {
+                tempFilters[niEar * m_nChannelCount * m_nFFTBins + niChannel * m_nFFTBins + ni] = m_ppcpFilters[niEar][niChannel][ni];
             }
-            loopBproc5: for(ni = 0; ni < m_nFFTSize; ni++)
-                m_pfScratchBufferA[ni] *= m_fFFTScaler;
-            memcpy(ppfDst[niEar], m_pfScratchBufferA.data(), m_nBlockSize * sizeof(float));
-            loopBproc6: for(ni = 0; ni < m_nOverlapLength; ni++)
-                ppfDst[niEar][ni] += m_pfOverlap[niEar][ni];
-            memcpy(m_pfOverlap[niEar].data(), &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
+        }
+    }
+
+    for (unsigned niEar = 0; niEar < 2; niEar++) {
+        for (unsigned ni = 0; ni < m_nOverlapLength; ni++) {
+            tempOverlap[niEar * m_nOverlapLength + ni] = m_pfOverlap[niEar][ni];
+        }
+    }
+
+    tempFFT_cfg = m_pFFT_cfg.get();
+    tempIFFT_cfg = m_pIFFT_cfg.get();
+
+    binauralizerProcess(tempBufferA, m_nFFTSize, m_nChannelCount,  tempBufferB, \
+                         m_nBlockSize, tempFFT_cfg, kiss_fft_cpx* m_pcpScratch, m_nFFTBins, m_ppcpFilters, \
+                         tempIFFT_cfg, m_nOverlapLength, tempOverlap, tempChannels, BLOCK_SIZE, tempDst, m_fFFTScalar);
+
+    for (unsigned niEar = 0; niEar < 2; niEar++) {
+        for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
+            ppfDst[niEar][ni] = tempDst[niEar * nSamples + ni];
+        }
+    }
+
+    for (unsigned niEar = 0; niEar < 2; niEar++) {
+        for (unsigned ni = 0; ni < m_nOverlapLength; ni++) {
+            m_pfOverlap[niEar][ni] = tempOverlap[niEar * m_nOverlapLength + ni];
         }
     }
 }

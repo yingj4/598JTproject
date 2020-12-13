@@ -21,7 +21,7 @@ _ZN17CAmbisonicSpeaker7ProcessEP8CBFormatjPf					not used
 
 _ZN16CAmbisonicZoomer7ProcessEP8CBFormatj					v
 
-_ZN22CAmbisonicBinauralizer7ProcessEP8CBFormatPPf
+_ZN22CAmbisonicBinauralizer7ProcessEP8CBFormatPPf				v
 _ZN22CAmbisonicBinauralizer9ConfigureEjbjjRjSs
 _ZN22CAmbisonicBinauralizer15AllocateBuffersEv
 
