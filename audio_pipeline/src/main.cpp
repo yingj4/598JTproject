@@ -1601,48 +1601,48 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
     This is different to the rotations obtained from the video, which are around z, y' then x''.
     The rotation equations used here work for third order. However, for higher orders a recursive algorithm
     should be considered.*/
-loopROa:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
-    {
-        // Alpha rotation
-        m_pfTempSample[kY] = -pBFSrcDst->m_ppfChannels[kX][niSample] * m_fSinAlpha
-                            + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fCosAlpha;
-        m_pfTempSample[kZ] = pBFSrcDst->m_ppfChannels[kZ][niSample];
-        m_pfTempSample[kX] = pBFSrcDst->m_ppfChannels[kX][niSample] * m_fCosAlpha
-                            + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fSinAlpha;
+    // for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    // {
+    //     // Alpha rotation
+    //     m_pfTempSample[kY] = -pBFSrcDst->m_ppfChannels[kX][niSample] * m_fSinAlpha
+    //                         + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fCosAlpha;
+    //     m_pfTempSample[kZ] = pBFSrcDst->m_ppfChannels[kZ][niSample];
+    //     m_pfTempSample[kX] = pBFSrcDst->m_ppfChannels[kX][niSample] * m_fCosAlpha
+    //                         + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fSinAlpha;
 
-        // Beta rotation
-        pBFSrcDst->m_ppfChannels[kY][niSample] = m_pfTempSample[kY];
-        pBFSrcDst->m_ppfChannels[kZ][niSample] = m_pfTempSample[kZ] * m_fCosBeta
-                            +  m_pfTempSample[kX] * m_fSinBeta;
-        pBFSrcDst->m_ppfChannels[kX][niSample] = m_pfTempSample[kX] * m_fCosBeta
-                            - m_pfTempSample[kZ] * m_fSinBeta;
+    //     // Beta rotation
+    //     pBFSrcDst->m_ppfChannels[kY][niSample] = m_pfTempSample[kY];
+    //     pBFSrcDst->m_ppfChannels[kZ][niSample] = m_pfTempSample[kZ] * m_fCosBeta
+    //                         +  m_pfTempSample[kX] * m_fSinBeta;
+    //     pBFSrcDst->m_ppfChannels[kX][niSample] = m_pfTempSample[kX] * m_fCosBeta
+    //                         - m_pfTempSample[kZ] * m_fSinBeta;
 
-        // Gamma rotation
-        m_pfTempSample[kY] = -pBFSrcDst->m_ppfChannels[kX][niSample] * m_fSinGamma
-                            + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fCosGamma;
-        m_pfTempSample[kZ] = pBFSrcDst->m_ppfChannels[kZ][niSample];
-        m_pfTempSample[kX] = pBFSrcDst->m_ppfChannels[kX][niSample] * m_fCosGamma
-                            + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fSinGamma;
+    //     // Gamma rotation
+    //     m_pfTempSample[kY] = -pBFSrcDst->m_ppfChannels[kX][niSample] * m_fSinGamma
+    //                         + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fCosGamma;
+    //     m_pfTempSample[kZ] = pBFSrcDst->m_ppfChannels[kZ][niSample];
+    //     m_pfTempSample[kX] = pBFSrcDst->m_ppfChannels[kX][niSample] * m_fCosGamma
+    //                         + pBFSrcDst->m_ppfChannels[kY][niSample] * m_fSinGamma;
 
-        pBFSrcDst->m_ppfChannels[kX][niSample] = m_pfTempSample[kX];
-        pBFSrcDst->m_ppfChannels[kY][niSample] = m_pfTempSample[kY];
-        pBFSrcDst->m_ppfChannels[kZ][niSample] = m_pfTempSample[kZ];
+    //     pBFSrcDst->m_ppfChannels[kX][niSample] = m_pfTempSample[kX];
+    //     pBFSrcDst->m_ppfChannels[kY][niSample] = m_pfTempSample[kY];
+    //     pBFSrcDst->m_ppfChannels[kZ][niSample] = m_pfTempSample[kZ];
+    // }
+
+    float tempChannels[3 * nSamples];
+    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+        tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kX][niSample];
+        tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kY][niSample];
+        tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kZ][niSample];
     }
 
-    // float tempChannels[3 * nSamples];
-    // for (unsigned niSample = 0; niSample < nSamples; niSample++) {
-    //     tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kX][niSample];
-    //     tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kY][niSample];
-    //     tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kZ][niSample];
-    // }
+    processOrder1(tempChannels, nSamples, m_fSinAlpha, m_fCosAlpha, m_fCosBeta, m_fSinBeta, m_fSinGamma, m_fCosGamma);
 
-    // processOrder1(tempChannels, nSamples, m_fSinAlpha, m_fCosAlpha, m_fCosBeta, m_fSinBeta, m_fSinGamma, m_fCosGamma);
-
-    // for (unsigned niSample = 0; niSample < nSamples; niSample++) {
-    //     pBFSrcDst->m_ppfChannels[kX][niSample] = tempChannels[nSamples * 2 + niSample];
-    //     pBFSrcDst->m_ppfChannels[kY][niSample] = tempChannels[niSample];
-    //     pBFSrcDst->m_ppfChannels[kZ][niSample] = tempChannels[nSamples + niSample];
-    // }
+    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+        pBFSrcDst->m_ppfChannels[kX][niSample] = tempChannels[nSamples * 2 + niSample];
+        pBFSrcDst->m_ppfChannels[kY][niSample] = tempChannels[niSample];
+        pBFSrcDst->m_ppfChannels[kZ][niSample] = tempChannels[nSamples + niSample];
+    }
 }
 
 extern "C" {
@@ -3405,15 +3405,15 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
     {
         // Perform the convolution on both ears. Potentially more realistic results but requires double the number of
         // convolutions.
-loopBproc1:        for(niEar = 0; niEar < 2; niEar++)
+        for(niEar = 0; niEar < 2; niEar++)
         {
             memset(m_pfScratchBufferA.data(), 0, m_nFFTSize * sizeof(float));
-loopBproc2:            for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+            for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
             {
                 memcpy(m_pfScratchBufferB.data(), pBFSrc->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
                 memset(&m_pfScratchBufferB[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
                 kiss_fftr(m_pFFT_cfg.get(), m_pfScratchBufferB.data(), m_pcpScratch.get());
-loopBproc3:                for(ni = 0; ni < m_nFFTBins; ni++)
+                for(ni = 0; ni < m_nFFTBins; ni++)
                 {
                     cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].r
                                 - m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].i;
@@ -3422,13 +3422,13 @@ loopBproc3:                for(ni = 0; ni < m_nFFTBins; ni++)
                     m_pcpScratch[ni] = cpTemp;
                 }
                 kiss_fftri(m_pIFFT_cfg.get(), m_pcpScratch.get(), m_pfScratchBufferB.data());
-loopBproc4:                for(ni = 0; ni < m_nFFTSize; ni++)
+                for(ni = 0; ni < m_nFFTSize; ni++)
                     m_pfScratchBufferA[ni] += m_pfScratchBufferB[ni];
             }
-loopBproc5:            for(ni = 0; ni < m_nFFTSize; ni++)
+            for(ni = 0; ni < m_nFFTSize; ni++)
                 m_pfScratchBufferA[ni] *= m_fFFTScaler;
             memcpy(ppfDst[niEar], m_pfScratchBufferA.data(), m_nBlockSize * sizeof(float));
-loopBproc6:            for(ni = 0; ni < m_nOverlapLength; ni++)
+            for(ni = 0; ni < m_nOverlapLength; ni++)
                 ppfDst[niEar][ni] += m_pfOverlap[niEar][ni];
             memcpy(m_pfOverlap[niEar].data(), &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
         }
