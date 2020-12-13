@@ -6,7 +6,7 @@ This file contains the loop labels and their function calls. The first column in
 |-----------------|---------------|-----------|--------|
 | Encode | encoderDistProcess | loopEDproc1 | P |
 | Encode | encoderDistProcess | loopEDproc2 | U |
-|  |  |  |
+|--|--|--|
 | Decode | processOrder1 | loopROa | U |
 |  |  |  |
 | Decode | processOrder2 | loopROb | U |
