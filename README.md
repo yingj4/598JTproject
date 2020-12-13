@@ -5,7 +5,7 @@ This project is based on [ILLIXR](https://github.com/ILLIXR/ILLIXR), [LLVM-Trace
 The output files generated from LLVM-Tracer are those end with `llvm` and 's'. The files in `./audio_pipeline/llvm-tracer-label-1/` and `./audio_pipeline/llvm-tracer-no-label/` are the stale ones we generated when doing this project.
 The binary executable is also an output. It is `./audio_pipeline/main-single`.
 ## Experiment Steps
-The binary executable also requires input for the number of input blocks and the operating mode. The operating mode includes `encode` and `decode`. For example, if you want to run audio encoding with 500 blocks, you should run
+The binary executable requires input for the number of input blocks and the operating mode. The operating mode includes `encode` and `decode`. For example, if you want to run audio encoding with 500 blocks, you should run
 ```
 ./audio_pipeline/main-single 500 encode
 ```
