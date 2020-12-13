@@ -1630,7 +1630,7 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
 //         pBFSrcDst->m_ppfChannels[kY][niSample] = m_pfTempSample[kY];
 //         pBFSrcDst->m_ppfChannels[kZ][niSample] = m_pfTempSample[kZ];
 //     }
-    float tempChannels[m_nChannelCount * nSamples];
+    float tempChannels[3 * nSamples];
     for (unsigned niSample = 0; niSample < nSamples; niSample++) {
         tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kX][niSample];
         tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kY][niSample];
@@ -1646,131 +1646,308 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
     }
 }
 
-void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSamples)
-{
+extern "C" {
+void processOrder2(float* tempChannels, unsigned nSamples, float m_fSin2Alpha, float m_fCos2Alpha, float m_fSinAlpha, float m_fCosAlpha, \
+                   float m_fSinBeta, float m_fCosBeta, float m_fCos2Beta, float m_fSin2Gamma, float m_fCos2Gamma) {
     float fSqrt3 = sqrt(3.f);
 
-loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
-        m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Alpha
-                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Alpha;
-        m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinAlpha
-                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosAlpha;
-        m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
-        m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosAlpha
-                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinAlpha;
-        m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Alpha
-                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Alpha;
+        float tempV = - tempChannels[nSamples * 4 + niSample] * m_fSin2Alpha
+                            + tempChannels[niSample] * m_fCos2Alpha;
+        float tempT = - tempChannels[nSamples * 3 + niSample] * m_fSinAlpha
+                            + tempChannels[nSamples + niSample] * m_fCosAlpha;
+        float tempR = tempChannels[nSamples * 2 + niSample];
+        float tempS = tempChannels[nSamples * 3 + niSample] * m_fCosAlpha
+                            + tempChannels[nSamples + niSample] * m_fSinAlpha;
+        float tempU = tempChannels[nSamples * 4 + niSample] * m_fCos2Alpha
+                            + tempChannels[niSample] * m_fSin2Alpha;
 
         // Beta rotation
-        pBFSrcDst->m_ppfChannels[kV][niSample] = -m_fSinBeta * m_pfTempSample[kT]
-                                        + m_fCosBeta * m_pfTempSample[kV];
-        pBFSrcDst->m_ppfChannels[kT][niSample] = -m_fCosBeta * m_pfTempSample[kT]
-                                        + m_fSinBeta * m_pfTempSample[kV];
-        pBFSrcDst->m_ppfChannels[kR][niSample] = (0.75f * m_fCos2Beta + 0.25f) * m_pfTempSample[kR]
-                            + (0.5 * fSqrt3 * pow(m_fSinBeta,2.0) ) * m_pfTempSample[kU]
-                            + (fSqrt3 * m_fSinBeta * m_fCosBeta) * m_pfTempSample[kS];
-        pBFSrcDst->m_ppfChannels[kS][niSample] = m_fCos2Beta * m_pfTempSample[kS]
-                            - fSqrt3 * m_fCosBeta * m_fSinBeta * m_pfTempSample[kR]
-                            + m_fCosBeta * m_fSinBeta * m_pfTempSample[kU];
-        pBFSrcDst->m_ppfChannels[kU][niSample] = (0.25f * m_fCos2Beta + 0.75f) * m_pfTempSample[kU]
-                            - m_fCosBeta * m_fSinBeta * m_pfTempSample[kS]
-                            +0.5 * fSqrt3 * pow(m_fSinBeta,2.0) * m_pfTempSample[kR];
+        tempChannels[kVniSample] = -m_fSinBeta * tempT
+                                        + m_fCosBeta * tempV;
+        tempChannels[nSamples + niSample] = -m_fCosBeta * tempT
+                                        + m_fSinBeta * tempV;
+        tempChannels[nSamples * 2 + niSample] = (0.75f * m_fCos2Beta + 0.25f) * tempR
+                            + (0.5 * fSqrt3 * pow(m_fSinBeta,2.0) ) * tempU
+                            + (fSqrt3 * m_fSinBeta * m_fCosBeta) * tempS;
+        tempChannels[nSamples * 3 + niSample] = m_fCos2Beta * tempS
+                            - fSqrt3 * m_fCosBeta * m_fSinBeta * tempR
+                            + m_fCosBeta * m_fSinBeta * tempU;
+        tempChannels[nSamples * 4 + niSample] = (0.25f * m_fCos2Beta + 0.75f) * tempU
+                            - m_fCosBeta * m_fSinBeta * tempS
+                            +0.5 * fSqrt3 * pow(m_fSinBeta,2.0) * tempR;
 
         // Gamma rotation
-        m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Gamma
-                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Gamma;
-        m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinGamma
-                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosGamma;
+        tempV = - tempChannels[nSamples * 4 + niSample] * m_fSin2Gamma
+                            + tempChannels[niSample] * m_fCos2Gamma;
+        tempT = - tempChannels[nSamples * 3 + niSample] * m_fSinGamma
+                            + tempChannels[nSamples + niSample] * m_fCosGamma;
 
-        m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
-        m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosGamma
-                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinGamma;
-        m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Gamma
-                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Gamma;
+        tempR = tempChannels[nSamples + niSample];
+        tempS = tempChannels[nSamples * 3 + niSample] * m_fCosGamma
+                            + tempChannels[nSamples + niSample] * m_fSinGamma;
+        tempU = tempChannels[nSamples * 4 + niSample] * m_fCos2Gamma
+                            + tempChannels[niSample] * m_fSin2Gamma;
 
-        pBFSrcDst->m_ppfChannels[kR][niSample] = m_pfTempSample[kR];
-        pBFSrcDst->m_ppfChannels[kS][niSample] = m_pfTempSample[kS];
-        pBFSrcDst->m_ppfChannels[kT][niSample] = m_pfTempSample[kT];
-        pBFSrcDst->m_ppfChannels[kU][niSample] = m_pfTempSample[kU];
-        pBFSrcDst->m_ppfChannels[kV][niSample] = m_pfTempSample[kV];
+        tempChannels[nSamples * 2 + niSample] = tempR;
+        tempChannels[nSamples * 3 + niSample] = tempS;
+        tempChannels[nSamples + niSample] = tempT;
+        tempChannels[nSamples * 4 + niSample] = tempU;
+        tempChannels[niSample] = tempV;
     }
+}
+}
+
+void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSamples)
+{
+    // float fSqrt3 = sqrt(3.f);
+
+// loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+//     {
+//         // Alpha rotation
+//         m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Alpha
+//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Alpha;
+//         m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinAlpha
+//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosAlpha;
+//         m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
+//         m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosAlpha
+//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinAlpha;
+//         m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Alpha
+//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Alpha;
+
+//         // Beta rotation
+//         pBFSrcDst->m_ppfChannels[kV][niSample] = -m_fSinBeta * m_pfTempSample[kT]
+//                                         + m_fCosBeta * m_pfTempSample[kV];
+//         pBFSrcDst->m_ppfChannels[kT][niSample] = -m_fCosBeta * m_pfTempSample[kT]
+//                                         + m_fSinBeta * m_pfTempSample[kV];
+//         pBFSrcDst->m_ppfChannels[kR][niSample] = (0.75f * m_fCos2Beta + 0.25f) * m_pfTempSample[kR]
+//                             + (0.5 * fSqrt3 * pow(m_fSinBeta,2.0) ) * m_pfTempSample[kU]
+//                             + (fSqrt3 * m_fSinBeta * m_fCosBeta) * m_pfTempSample[kS];
+//         pBFSrcDst->m_ppfChannels[kS][niSample] = m_fCos2Beta * m_pfTempSample[kS]
+//                             - fSqrt3 * m_fCosBeta * m_fSinBeta * m_pfTempSample[kR]
+//                             + m_fCosBeta * m_fSinBeta * m_pfTempSample[kU];
+//         pBFSrcDst->m_ppfChannels[kU][niSample] = (0.25f * m_fCos2Beta + 0.75f) * m_pfTempSample[kU]
+//                             - m_fCosBeta * m_fSinBeta * m_pfTempSample[kS]
+//                             +0.5 * fSqrt3 * pow(m_fSinBeta,2.0) * m_pfTempSample[kR];
+
+//         // Gamma rotation
+//         m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Gamma
+//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Gamma;
+//         m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinGamma
+//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosGamma;
+
+//         m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
+//         m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosGamma
+//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinGamma;
+//         m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Gamma
+//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Gamma;
+
+//         pBFSrcDst->m_ppfChannels[kR][niSample] = m_pfTempSample[kR];
+//         pBFSrcDst->m_ppfChannels[kS][niSample] = m_pfTempSample[kS];
+//         pBFSrcDst->m_ppfChannels[kT][niSample] = m_pfTempSample[kT];
+//         pBFSrcDst->m_ppfChannels[kU][niSample] = m_pfTempSample[kU];
+//         pBFSrcDst->m_ppfChannels[kV][niSample] = m_pfTempSample[kV];
+//     }
+    float tempChannels[5 * nSamples];
+
+    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+        tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kR][niSample];
+        tempChannels[nSamples * 3 + niSample] = pBFSrcDst->m_ppfChannels[kS][niSample];
+        tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kT][niSample];
+        tempChannels[nSamples * 4 + niSample] = pBFSrcDst->m_ppfChannels[kU][niSample];
+        tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kV][niSample];
+    }
+
+    processOrder2(tempChannels, nSamples, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, m_fCosAlpha, m_fSinBeta, m_fCosBeta, m_fCos2Beta, m_fSin2Gamma, m_fCos2Gamma);
+
+    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+        pBFSrcDst->m_ppfChannels[kR][niSample] = tempChannels[nSamples * 2 + niSample];
+        pBFSrcDst->m_ppfChannels[kS][niSample] = tempChannels[nSamples * 3 + niSample];
+        pBFSrcDst->m_ppfChannels[kT][niSample] = tempChannels[nSamples + niSample];
+        pBFSrcDst->m_ppfChannels[kU][niSample] = tempChannels[nSamples * 4 + niSample];
+        pBFSrcDst->m_ppfChannels[kV][niSample] = tempChannels[niSample];
+    }
+}
+
+extern "C" {
+void processOrder3(float* tempChannels, unsigned nSamples, float m_fSin3Alpha, float m_fCos3Alpha, float m_fSin2Alpha, float m_fCos2Alpha, float m_fSinAlpha, \
+                   float m_fCosAlpha, float m_fCos2Beta, float m_fCosBeta, float m_fSinBeta, float m_fSin3Beta, float m_fCos3Beta, float m_fSin3Gamma, \
+                   float m_fCos3Gamma, float m_fSin2Gamma, float m_fCos2Gamma, float m_fSinGamma, float m_fCosGamma) {
+        /* (should move these somewhere that does recompute each time) */
+    float fSqrt3_2 = sqrt(3.f/2.f);
+    float fSqrt15 = sqrt(15.f);
+    float fSqrt5_2 = sqrt(5.f/2.f);
+
+    loopROc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    {
+        // Alpha rotation
+        float tempQ = - tempChannels[nSamples * 6 + niSample] * m_fSin3Alpha
+                            + tempChannels[niSample] * m_fCos3Alpha;
+        float tempO = - tempChannels[nSamples * 5 + niSample] * m_fSin2Alpha
+                            + tempChannels[nSamples + niSample] * m_fCos2Alpha;
+        float tempM = - tempChannels[nSamples * 4 + niSample] * m_fSinAlpha
+                            + tempChannels[nSamples * 2 + niSample] * m_fCosAlpha;
+        float tempK = tempChannels[nSamples * 3 + niSample];
+        float tempL = tempChannels[nSamples * 4 + niSample] * m_fCosAlpha
+                            + tempChannels[nSamples * 2 + niSample] * m_fSinAlpha;
+        float tempN = tempChannels[nSamples * 5 + niSample] * m_fCos2Alpha
+                            + tempChannels[nSamples + niSample] * m_fSin2Alpha;
+        float tempP = tempChannels[nSamples * 6 + niSample] * m_fCos3Alpha
+                            + tempChannels[niSample] * m_fSin3Alpha;
+
+        // Beta rotation
+        tempChannels[niSample] = 0.125f * tempQ * (5.f + 3.f*m_fCos2Beta)
+                    - fSqrt3_2 * tempO *m_fCosBeta * m_fSinBeta
+                    + 0.25f * fSqrt15 * tempM * pow(m_fSinBeta,2.0f);
+        tempChannels[nSamples + niSample] = tempO * m_fCos2Beta
+                    - fSqrt5_2 * tempM * m_fCosBeta * m_fSinBeta
+                    + fSqrt3_2 * tempQ * m_fCosBeta * m_fSinBeta;
+        tempChannels[nSamples * 2 + niSample] = 0.125f * tempM * (3.f + 5.f*m_fCos2Beta)
+                    - fSqrt5_2 * tempO *m_fCosBeta * m_fSinBeta
+                    + 0.25f * fSqrt15 * tempQ * pow(m_fSinBeta,2.0f);
+        tempChannels[nSamples * 3 + niSample] = 0.25f * tempK * m_fCosBeta * (-1.f + 15.f*m_fCos2Beta)
+                    + 0.5f * fSqrt15 * tempN * m_fCosBeta * pow(m_fSinBeta,2.f)
+                    + 0.5f * fSqrt5_2 * tempP * pow(m_fSinBeta,3.f)
+                    + 0.125f * fSqrt3_2 * tempL * (m_fSinBeta + 5.f * m_fSin3Beta);
+        tempChannels[nSamples * 4 + niSample] = 0.0625f * tempL * (m_fCosBeta + 15.f * m_fCos3Beta)
+                    + 0.25f * fSqrt5_2 * tempN * (1.f + 3.f * m_fCos2Beta) * m_fSinBeta
+                    + 0.25f * fSqrt15 * tempP * m_fCosBeta * pow(m_fSinBeta,2.f)
+                    - 0.125 * fSqrt3_2 * tempK * (m_fSinBeta + 5.f * m_fSin3Beta);
+        tempChannels[nSamples * 5 + niSample] = 0.125f * tempN * (5.f * m_fCosBeta + 3.f * m_fCos3Beta)
+                    + 0.25f * fSqrt3_2 * tempP * (3.f + m_fCos2Beta) * m_fSinBeta
+                    + 0.5f * fSqrt15 * tempK * m_fCosBeta * pow(m_fSinBeta,2.f)
+                    + 0.125 * fSqrt5_2 * tempL * (m_fSinBeta - 3.f * m_fSin3Beta);
+        tempChannels[knSamples * 6 + niSample] = 0.0625f * tempP * (15.f * m_fCosBeta + m_fCos3Beta)
+                    - 0.25f * fSqrt3_2 * tempN * (3.f + m_fCos2Beta) * m_fSinBeta
+                    + 0.25f * fSqrt15 * tempL * m_fCosBeta * pow(m_fSinBeta,2.f)
+                    - 0.5 * fSqrt5_2 * tempK * pow(m_fSinBeta,3.f);
+
+        // Gamma rotation
+        tempQ = - tempChannels[nSamples * 6 + niSample] * m_fSin3Gamma
+                            + tempChannels[niSample] * m_fCos3Gamma;
+        tempO = - tempChannels[nSamples * 5 + niSample] * m_fSin2Gamma
+                            + tempChannels[nSamples + niSample] * m_fCos2Gamma;
+        tempM = - tempChannels[nSamples * 4 + niSample] * m_fSinGamma
+                            + ptempChannels[nSamples * 2 + niSample] * m_fCosGamma;
+        tempK = tempChannels[nSamples * 3 + niSample];
+        tempL = tempChannels[nSamples * 4 + niSample] * m_fCosGamma
+                            + tempChannels[nSamples * 2 + niSample] * m_fSinGamma;
+        tempN = tempChannels[nSamples * 5 + niSample] * m_fCos2Gamma
+                            + tempChannels[nSamples + niSample] * m_fSin2Gamma;
+        tempP = tempChannels[nSamples * 6 + niSample] * m_fCos3Gamma
+                            + tempChannels[niSample] * m_fSin3Gamma;
+
+        tempChannels[kQ][niSample] = tempQ;
+        tempChannels[kO][niSample] = tempO;
+        tempChannels[kM][niSample] = tempM;
+        tempChannels[kK][niSample] = tempK;
+        tempChannels[kL][niSample] = tempL;
+        tempChannels[kN][niSample] = tempN;
+        tempChannels[kP][niSample] = tempP;
+    }
+}
 }
 
 void CAmbisonicProcessor::ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSamples)
 {
-        /* (should move these somewhere that does recompute each time) */
-        float fSqrt3_2 = sqrt(3.f/2.f);
-        float fSqrt15 = sqrt(15.f);
-        float fSqrt5_2 = sqrt(5.f/2.f);
+//         /* (should move these somewhere that does recompute each time) */
+//         float fSqrt3_2 = sqrt(3.f/2.f);
+//         float fSqrt15 = sqrt(15.f);
+//         float fSqrt5_2 = sqrt(5.f/2.f);
 
-loopROc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
-    {
-        // Alpha rotation
-        m_pfTempSample[kQ] = - pBFSrcDst->m_ppfChannels[kP][niSample] * m_fSin3Alpha
-                            + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fCos3Alpha;
-        m_pfTempSample[kO] = - pBFSrcDst->m_ppfChannels[kN][niSample] * m_fSin2Alpha
-                            + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fCos2Alpha;
-        m_pfTempSample[kM] = - pBFSrcDst->m_ppfChannels[kL][niSample] * m_fSinAlpha
-                            + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fCosAlpha;
-        m_pfTempSample[kK] = pBFSrcDst->m_ppfChannels[kK][niSample];
-        m_pfTempSample[kL] = pBFSrcDst->m_ppfChannels[kL][niSample] * m_fCosAlpha
-                            + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fSinAlpha;
-        m_pfTempSample[kN] = pBFSrcDst->m_ppfChannels[kN][niSample] * m_fCos2Alpha
-                            + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fSin2Alpha;
-        m_pfTempSample[kP] = pBFSrcDst->m_ppfChannels[kP][niSample] * m_fCos3Alpha
-                            + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fSin3Alpha;
+// loopROc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+//     {
+//         // Alpha rotation
+//         m_pfTempSample[kQ] = - pBFSrcDst->m_ppfChannels[kP][niSample] * m_fSin3Alpha
+//                             + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fCos3Alpha;
+//         m_pfTempSample[kO] = - pBFSrcDst->m_ppfChannels[kN][niSample] * m_fSin2Alpha
+//                             + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fCos2Alpha;
+//         m_pfTempSample[kM] = - pBFSrcDst->m_ppfChannels[kL][niSample] * m_fSinAlpha
+//                             + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fCosAlpha;
+//         m_pfTempSample[kK] = pBFSrcDst->m_ppfChannels[kK][niSample];
+//         m_pfTempSample[kL] = pBFSrcDst->m_ppfChannels[kL][niSample] * m_fCosAlpha
+//                             + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fSinAlpha;
+//         m_pfTempSample[kN] = pBFSrcDst->m_ppfChannels[kN][niSample] * m_fCos2Alpha
+//                             + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fSin2Alpha;
+//         m_pfTempSample[kP] = pBFSrcDst->m_ppfChannels[kP][niSample] * m_fCos3Alpha
+//                             + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fSin3Alpha;
 
-        // Beta rotation
-        pBFSrcDst->m_ppfChannels[kQ][niSample] = 0.125f * m_pfTempSample[kQ] * (5.f + 3.f*m_fCos2Beta)
-                    - fSqrt3_2 * m_pfTempSample[kO] *m_fCosBeta * m_fSinBeta
-                    + 0.25f * fSqrt15 * m_pfTempSample[kM] * pow(m_fSinBeta,2.0f);
-        pBFSrcDst->m_ppfChannels[kO][niSample] = m_pfTempSample[kO] * m_fCos2Beta
-                    - fSqrt5_2 * m_pfTempSample[kM] * m_fCosBeta * m_fSinBeta
-                    + fSqrt3_2 * m_pfTempSample[kQ] * m_fCosBeta * m_fSinBeta;
-        pBFSrcDst->m_ppfChannels[kM][niSample] = 0.125f * m_pfTempSample[kM] * (3.f + 5.f*m_fCos2Beta)
-                    - fSqrt5_2 * m_pfTempSample[kO] *m_fCosBeta * m_fSinBeta
-                    + 0.25f * fSqrt15 * m_pfTempSample[kQ] * pow(m_fSinBeta,2.0f);
-        pBFSrcDst->m_ppfChannels[kK][niSample] = 0.25f * m_pfTempSample[kK] * m_fCosBeta * (-1.f + 15.f*m_fCos2Beta)
-                    + 0.5f * fSqrt15 * m_pfTempSample[kN] * m_fCosBeta * pow(m_fSinBeta,2.f)
-                    + 0.5f * fSqrt5_2 * m_pfTempSample[kP] * pow(m_fSinBeta,3.f)
-                    + 0.125f * fSqrt3_2 * m_pfTempSample[kL] * (m_fSinBeta + 5.f * m_fSin3Beta);
-        pBFSrcDst->m_ppfChannels[kL][niSample] = 0.0625f * m_pfTempSample[kL] * (m_fCosBeta + 15.f * m_fCos3Beta)
-                    + 0.25f * fSqrt5_2 * m_pfTempSample[kN] * (1.f + 3.f * m_fCos2Beta) * m_fSinBeta
-                    + 0.25f * fSqrt15 * m_pfTempSample[kP] * m_fCosBeta * pow(m_fSinBeta,2.f)
-                    - 0.125 * fSqrt3_2 * m_pfTempSample[kK] * (m_fSinBeta + 5.f * m_fSin3Beta);
-        pBFSrcDst->m_ppfChannels[kN][niSample] = 0.125f * m_pfTempSample[kN] * (5.f * m_fCosBeta + 3.f * m_fCos3Beta)
-                    + 0.25f * fSqrt3_2 * m_pfTempSample[kP] * (3.f + m_fCos2Beta) * m_fSinBeta
-                    + 0.5f * fSqrt15 * m_pfTempSample[kK] * m_fCosBeta * pow(m_fSinBeta,2.f)
-                    + 0.125 * fSqrt5_2 * m_pfTempSample[kL] * (m_fSinBeta - 3.f * m_fSin3Beta);
-        pBFSrcDst->m_ppfChannels[kP][niSample] = 0.0625f * m_pfTempSample[kP] * (15.f * m_fCosBeta + m_fCos3Beta)
-                    - 0.25f * fSqrt3_2 * m_pfTempSample[kN] * (3.f + m_fCos2Beta) * m_fSinBeta
-                    + 0.25f * fSqrt15 * m_pfTempSample[kL] * m_fCosBeta * pow(m_fSinBeta,2.f)
-                    - 0.5 * fSqrt5_2 * m_pfTempSample[kK] * pow(m_fSinBeta,3.f);
+//         // Beta rotation
+//         pBFSrcDst->m_ppfChannels[kQ][niSample] = 0.125f * m_pfTempSample[kQ] * (5.f + 3.f*m_fCos2Beta)
+//                     - fSqrt3_2 * m_pfTempSample[kO] *m_fCosBeta * m_fSinBeta
+//                     + 0.25f * fSqrt15 * m_pfTempSample[kM] * pow(m_fSinBeta,2.0f);
+//         pBFSrcDst->m_ppfChannels[kO][niSample] = m_pfTempSample[kO] * m_fCos2Beta
+//                     - fSqrt5_2 * m_pfTempSample[kM] * m_fCosBeta * m_fSinBeta
+//                     + fSqrt3_2 * m_pfTempSample[kQ] * m_fCosBeta * m_fSinBeta;
+//         pBFSrcDst->m_ppfChannels[kM][niSample] = 0.125f * m_pfTempSample[kM] * (3.f + 5.f*m_fCos2Beta)
+//                     - fSqrt5_2 * m_pfTempSample[kO] *m_fCosBeta * m_fSinBeta
+//                     + 0.25f * fSqrt15 * m_pfTempSample[kQ] * pow(m_fSinBeta,2.0f);
+//         pBFSrcDst->m_ppfChannels[kK][niSample] = 0.25f * m_pfTempSample[kK] * m_fCosBeta * (-1.f + 15.f*m_fCos2Beta)
+//                     + 0.5f * fSqrt15 * m_pfTempSample[kN] * m_fCosBeta * pow(m_fSinBeta,2.f)
+//                     + 0.5f * fSqrt5_2 * m_pfTempSample[kP] * pow(m_fSinBeta,3.f)
+//                     + 0.125f * fSqrt3_2 * m_pfTempSample[kL] * (m_fSinBeta + 5.f * m_fSin3Beta);
+//         pBFSrcDst->m_ppfChannels[kL][niSample] = 0.0625f * m_pfTempSample[kL] * (m_fCosBeta + 15.f * m_fCos3Beta)
+//                     + 0.25f * fSqrt5_2 * m_pfTempSample[kN] * (1.f + 3.f * m_fCos2Beta) * m_fSinBeta
+//                     + 0.25f * fSqrt15 * m_pfTempSample[kP] * m_fCosBeta * pow(m_fSinBeta,2.f)
+//                     - 0.125 * fSqrt3_2 * m_pfTempSample[kK] * (m_fSinBeta + 5.f * m_fSin3Beta);
+//         pBFSrcDst->m_ppfChannels[kN][niSample] = 0.125f * m_pfTempSample[kN] * (5.f * m_fCosBeta + 3.f * m_fCos3Beta)
+//                     + 0.25f * fSqrt3_2 * m_pfTempSample[kP] * (3.f + m_fCos2Beta) * m_fSinBeta
+//                     + 0.5f * fSqrt15 * m_pfTempSample[kK] * m_fCosBeta * pow(m_fSinBeta,2.f)
+//                     + 0.125 * fSqrt5_2 * m_pfTempSample[kL] * (m_fSinBeta - 3.f * m_fSin3Beta);
+//         pBFSrcDst->m_ppfChannels[kP][niSample] = 0.0625f * m_pfTempSample[kP] * (15.f * m_fCosBeta + m_fCos3Beta)
+//                     - 0.25f * fSqrt3_2 * m_pfTempSample[kN] * (3.f + m_fCos2Beta) * m_fSinBeta
+//                     + 0.25f * fSqrt15 * m_pfTempSample[kL] * m_fCosBeta * pow(m_fSinBeta,2.f)
+//                     - 0.5 * fSqrt5_2 * m_pfTempSample[kK] * pow(m_fSinBeta,3.f);
 
-        // Gamma rotation
-        m_pfTempSample[kQ] = - pBFSrcDst->m_ppfChannels[kP][niSample] * m_fSin3Gamma
-                            + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fCos3Gamma;
-        m_pfTempSample[kO] = - pBFSrcDst->m_ppfChannels[kN][niSample] * m_fSin2Gamma
-                            + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fCos2Gamma;
-        m_pfTempSample[kM] = - pBFSrcDst->m_ppfChannels[kL][niSample] * m_fSinGamma
-                            + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fCosGamma;
-        m_pfTempSample[kK] = pBFSrcDst->m_ppfChannels[kK][niSample];
-        m_pfTempSample[kL] = pBFSrcDst->m_ppfChannels[kL][niSample] * m_fCosGamma
-                            + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fSinGamma;
-        m_pfTempSample[kN] = pBFSrcDst->m_ppfChannels[kN][niSample] * m_fCos2Gamma
-                            + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fSin2Gamma;
-        m_pfTempSample[kP] = pBFSrcDst->m_ppfChannels[kP][niSample] * m_fCos3Gamma
-                            + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fSin3Gamma;
+//         // Gamma rotation
+//         m_pfTempSample[kQ] = - pBFSrcDst->m_ppfChannels[kP][niSample] * m_fSin3Gamma
+//                             + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fCos3Gamma;
+//         m_pfTempSample[kO] = - pBFSrcDst->m_ppfChannels[kN][niSample] * m_fSin2Gamma
+//                             + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fCos2Gamma;
+//         m_pfTempSample[kM] = - pBFSrcDst->m_ppfChannels[kL][niSample] * m_fSinGamma
+//                             + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fCosGamma;
+//         m_pfTempSample[kK] = pBFSrcDst->m_ppfChannels[kK][niSample];
+//         m_pfTempSample[kL] = pBFSrcDst->m_ppfChannels[kL][niSample] * m_fCosGamma
+//                             + pBFSrcDst->m_ppfChannels[kM][niSample] * m_fSinGamma;
+//         m_pfTempSample[kN] = pBFSrcDst->m_ppfChannels[kN][niSample] * m_fCos2Gamma
+//                             + pBFSrcDst->m_ppfChannels[kO][niSample] * m_fSin2Gamma;
+//         m_pfTempSample[kP] = pBFSrcDst->m_ppfChannels[kP][niSample] * m_fCos3Gamma
+//                             + pBFSrcDst->m_ppfChannels[kQ][niSample] * m_fSin3Gamma;
 
-        pBFSrcDst->m_ppfChannels[kQ][niSample] = m_pfTempSample[kQ];
-        pBFSrcDst->m_ppfChannels[kO][niSample] = m_pfTempSample[kO];
-        pBFSrcDst->m_ppfChannels[kM][niSample] = m_pfTempSample[kM];
-        pBFSrcDst->m_ppfChannels[kK][niSample] = m_pfTempSample[kK];
-        pBFSrcDst->m_ppfChannels[kL][niSample] = m_pfTempSample[kL];
-        pBFSrcDst->m_ppfChannels[kN][niSample] = m_pfTempSample[kN];
-        pBFSrcDst->m_ppfChannels[kP][niSample] = m_pfTempSample[kP];
+//         pBFSrcDst->m_ppfChannels[kQ][niSample] = m_pfTempSample[kQ];
+//         pBFSrcDst->m_ppfChannels[kO][niSample] = m_pfTempSample[kO];
+//         pBFSrcDst->m_ppfChannels[kM][niSample] = m_pfTempSample[kM];
+//         pBFSrcDst->m_ppfChannels[kK][niSample] = m_pfTempSample[kK];
+//         pBFSrcDst->m_ppfChannels[kL][niSample] = m_pfTempSample[kL];
+//         pBFSrcDst->m_ppfChannels[kN][niSample] = m_pfTempSample[kN];
+//         pBFSrcDst->m_ppfChannels[kP][niSample] = m_pfTempSample[kP];
+//     }
+    float tempChannels[7 * nSamples];
+
+    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+        tempChannels[niSamples] = m_pfTempSample[kQ];
+        tempChannels[nSamples + niSamples] = m_pfTempSample[kO];
+        tempChannels[nSamples * 2 + niSamples] = m_pfTempSample[kM];
+        tempChannels[nSamples * 3 + niSamples] = m_pfTempSample[kK];
+        tempChannels[nSamples * 4 + niSamples] = m_pfTempSample[kL];
+        tempChannels[nSamples * 5 + niSamples] = m_pfTempSample[kN];
+        tempChannels[nSamples * 6 + niSamples] = m_pfTempSample[kP];
+    }
+
+    processOrder3(tempChannels, nSamples, m_fSin3Alpha, m_fCos3Alpha, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, \
+                   m_fCosAlpha, m_fCos2Beta, m_fCosBeta, m_fSinBeta, m_fSin3Beta, m_fCos3Beta, m_fSin3Gamma, \
+                   m_fCos3Gamma, m_fSin2Gamma, m_fCos2Gamma, m_fSinGamma, m_fCosGamma);
+
+    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+        m_pfTempSample[kQ] = tempChannels[niSamples];
+        m_pfTempSample[kO] = tempChannels[nSamples + niSamples];
+        m_pfTempSample[kM] = tempChannels[nSamples * 2 + niSamples];
+        m_pfTempSample[kK] = tempChannels[nSamples * 3 + niSamples];
+        m_pfTempSample[kL] = tempChannels[nSamples * 4 + niSamples];
+        m_pfTempSample[kN] = tempChannels[nSamples * 5 + niSamples];
+        m_pfTempSample[kP] = tempChannels[nSamples * 6 + niSamples];
     }
 }
 
