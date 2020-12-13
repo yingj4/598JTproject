@@ -1564,7 +1564,7 @@ void CAmbisonicProcessor::Process(CBFormat* pBFSrcDst, unsigned nSamples)
 }
 
 extern "C" {
-processOrder1(float* tempChannels, unsigned nSamples, float m_fSinAlpha, float m_fCosAlpha, float m_fCosBeta, float m_fSinBeta, float m_fSinGamma, float m_fCosGamma) {
+void processOrder1(float* tempChannels, unsigned nSamples, float m_fSinAlpha, float m_fCosAlpha, float m_fCosBeta, float m_fSinBeta, float m_fSinGamma, float m_fCosGamma) {
     loopROa:    for(unsigned niSample = 0; niSample < nSamples; niSample++) {
         // Alpha rotation
         float tempY = -tempChannels[nSamples * 2 + niSample] * m_fSinAlpha
