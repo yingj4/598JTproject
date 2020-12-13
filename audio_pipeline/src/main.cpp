@@ -2988,7 +2988,7 @@ float CAmbisonicZoomer::GetZoom()
 }
 
 extern "C" {
-void zoomerProcess(float* tempChannels, float* m_AmbEncoderFront_weighted, float* m_AmbEncoderFront, unsigned nSamples, unsigned m_nChannelCount, float m_fZoomBlend, float m_fZoom, float m_AmbFrontMic, float m_fZoomBlend) {
+void zoomerProcess(float* tempChannels, float* m_AmbEncoderFront_weighted, float* m_AmbEncoderFront, unsigned nSamples, unsigned m_nChannelCount, float m_fZoomBlend, float m_fZoom, float m_AmbFrontMic, float m_fZoomRed) {
 loopZproc1:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         float fMic = 0.f;
@@ -3027,7 +3027,7 @@ loopZproc3:        for(unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++
                 }
             }
             else {
-                f ((-m_AmbEncoderFront[iChannel]) > 1e-6) {
+                if ((-m_AmbEncoderFront[iChannel]) > 1e-6) {
                     if (m_fZoom >= 0) {
                         tempChannels[iChannel * nSamples + niSample] = (m_fZoomBlend * tempChannels[iChannel * nSamples + niSample]
                         + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend + m_fZoom*m_AmbFrontMic);
@@ -3073,8 +3073,8 @@ void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
 //         }
 //     }
     float tempChannels[m_nChannelCount * nSamples];
-    float tempAmbEncoderFront_weighted[m_AmbEncoderFront_weighted.size()];
-    float tempAmbEncoderFront[m_AmbEncoderFront.size()];
+    float tempAmbEncoderFront_weighted[m_nChannelCount];
+    float tempAmbEncoderFront[m_nChannelCount];
 
     for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
         for (unsigned niSample = 0; niSample < nSamples; niSample++) {
@@ -3090,7 +3090,7 @@ void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
         tempAmbEncoderFront[iChannel] = m_AmbEncoderFront[iChannel];
     }
 
-    zoomerProcess(tempChannels, tempAmbEncoderFront_weighted, tempAmbEncoderFront, nSamples, m_nChannelCount, m_fZoomBlend, m_fZoom, m_AmbFrontMic, m_fZoomBlend);
+    zoomerProcess(tempChannels, tempAmbEncoderFront_weighted, tempAmbEncoderFront, nSamples, m_nChannelCount, m_fZoomBlend, m_fZoom, m_AmbFrontMic);
 
     for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
         for (unsigned niSample = 0; niSample < nSamples; niSample++) {
