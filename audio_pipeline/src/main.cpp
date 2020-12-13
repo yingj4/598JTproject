@@ -3490,7 +3490,7 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
 
     std::cout << std::endl;
     std::cout << "size of a float is: " << sizeof(float) << std::endl;
-    std::cout << "size of a kiss_fft_cpx" << sizeof (kiss_fft_cpx) << std::endl;
+    std::cout << "size of a kiss_fft_cpx is: " << sizeof (kiss_fft_cpx) << std::endl;
     std::cout << "size of m_pfScratchBufferA is: "<< m_nFFTSize * sizeof(float) << std::endl;
     std::cout << "size of m_pfScratchBufferB is: "<< m_nFFTSize * sizeof(float) << std::endl;
     std::cout << "size of m_pcpScratch is: "<< m_nFFTBins * sizeof(kiss_fft_cpx) << std::endl;
