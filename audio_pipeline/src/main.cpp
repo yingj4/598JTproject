@@ -1703,72 +1703,72 @@ void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSample
 {
     float fSqrt3 = sqrt(3.f);
 
-// loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
-//     {
-//         // Alpha rotation
-//         m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Alpha
-//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Alpha;
-//         m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinAlpha
-//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosAlpha;
-//         m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
-//         m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosAlpha
-//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinAlpha;
-//         m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Alpha
-//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Alpha;
+    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    {
+        // Alpha rotation
+        m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Alpha
+                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Alpha;
+        m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinAlpha
+                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosAlpha;
+        m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
+        m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosAlpha
+                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinAlpha;
+        m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Alpha
+                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Alpha;
 
-//         // Beta rotation
-//         pBFSrcDst->m_ppfChannels[kV][niSample] = -m_fSinBeta * m_pfTempSample[kT]
-//                                         + m_fCosBeta * m_pfTempSample[kV];
-//         pBFSrcDst->m_ppfChannels[kT][niSample] = -m_fCosBeta * m_pfTempSample[kT]
-//                                         + m_fSinBeta * m_pfTempSample[kV];
-//         pBFSrcDst->m_ppfChannels[kR][niSample] = (0.75f * m_fCos2Beta + 0.25f) * m_pfTempSample[kR]
-//                             + (0.5 * fSqrt3 * pow(m_fSinBeta,2.0) ) * m_pfTempSample[kU]
-//                             + (fSqrt3 * m_fSinBeta * m_fCosBeta) * m_pfTempSample[kS];
-//         pBFSrcDst->m_ppfChannels[kS][niSample] = m_fCos2Beta * m_pfTempSample[kS]
-//                             - fSqrt3 * m_fCosBeta * m_fSinBeta * m_pfTempSample[kR]
-//                             + m_fCosBeta * m_fSinBeta * m_pfTempSample[kU];
-//         pBFSrcDst->m_ppfChannels[kU][niSample] = (0.25f * m_fCos2Beta + 0.75f) * m_pfTempSample[kU]
-//                             - m_fCosBeta * m_fSinBeta * m_pfTempSample[kS]
-//                             +0.5 * fSqrt3 * pow(m_fSinBeta,2.0) * m_pfTempSample[kR];
+        // Beta rotation
+        pBFSrcDst->m_ppfChannels[kV][niSample] = -m_fSinBeta * m_pfTempSample[kT]
+                                        + m_fCosBeta * m_pfTempSample[kV];
+        pBFSrcDst->m_ppfChannels[kT][niSample] = -m_fCosBeta * m_pfTempSample[kT]
+                                        + m_fSinBeta * m_pfTempSample[kV];
+        pBFSrcDst->m_ppfChannels[kR][niSample] = (0.75f * m_fCos2Beta + 0.25f) * m_pfTempSample[kR]
+                            + (0.5 * fSqrt3 * pow(m_fSinBeta,2.0) ) * m_pfTempSample[kU]
+                            + (fSqrt3 * m_fSinBeta * m_fCosBeta) * m_pfTempSample[kS];
+        pBFSrcDst->m_ppfChannels[kS][niSample] = m_fCos2Beta * m_pfTempSample[kS]
+                            - fSqrt3 * m_fCosBeta * m_fSinBeta * m_pfTempSample[kR]
+                            + m_fCosBeta * m_fSinBeta * m_pfTempSample[kU];
+        pBFSrcDst->m_ppfChannels[kU][niSample] = (0.25f * m_fCos2Beta + 0.75f) * m_pfTempSample[kU]
+                            - m_fCosBeta * m_fSinBeta * m_pfTempSample[kS]
+                            +0.5 * fSqrt3 * pow(m_fSinBeta,2.0) * m_pfTempSample[kR];
 
-//         // Gamma rotation
-//         m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Gamma
-//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Gamma;
-//         m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinGamma
-//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosGamma;
+        // Gamma rotation
+        m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Gamma
+                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fCos2Gamma;
+        m_pfTempSample[kT] = - pBFSrcDst->m_ppfChannels[kS][niSample] * m_fSinGamma
+                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fCosGamma;
 
-//         m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
-//         m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosGamma
-//                             + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinGamma;
-//         m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Gamma
-//                             + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Gamma;
+        m_pfTempSample[kR] = pBFSrcDst->m_ppfChannels[kR][niSample];
+        m_pfTempSample[kS] = pBFSrcDst->m_ppfChannels[kS][niSample] * m_fCosGamma
+                            + pBFSrcDst->m_ppfChannels[kT][niSample] * m_fSinGamma;
+        m_pfTempSample[kU] = pBFSrcDst->m_ppfChannels[kU][niSample] * m_fCos2Gamma
+                            + pBFSrcDst->m_ppfChannels[kV][niSample] * m_fSin2Gamma;
 
-//         pBFSrcDst->m_ppfChannels[kR][niSample] = m_pfTempSample[kR];
-//         pBFSrcDst->m_ppfChannels[kS][niSample] = m_pfTempSample[kS];
-//         pBFSrcDst->m_ppfChannels[kT][niSample] = m_pfTempSample[kT];
-//         pBFSrcDst->m_ppfChannels[kU][niSample] = m_pfTempSample[kU];
-//         pBFSrcDst->m_ppfChannels[kV][niSample] = m_pfTempSample[kV];
-//     }
-
-    float tempChannels[5 * nSamples];
-
-    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
-        tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kR][niSample];
-        tempChannels[nSamples * 3 + niSample] = pBFSrcDst->m_ppfChannels[kS][niSample];
-        tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kT][niSample];
-        tempChannels[nSamples * 4 + niSample] = pBFSrcDst->m_ppfChannels[kU][niSample];
-        tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kV][niSample];
+        pBFSrcDst->m_ppfChannels[kR][niSample] = m_pfTempSample[kR];
+        pBFSrcDst->m_ppfChannels[kS][niSample] = m_pfTempSample[kS];
+        pBFSrcDst->m_ppfChannels[kT][niSample] = m_pfTempSample[kT];
+        pBFSrcDst->m_ppfChannels[kU][niSample] = m_pfTempSample[kU];
+        pBFSrcDst->m_ppfChannels[kV][niSample] = m_pfTempSample[kV];
     }
 
-    processOrder2(tempChannels, nSamples, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, m_fCosAlpha, m_fSinBeta, m_fCosBeta, m_fCos2Beta, m_fSin2Gamma, m_fCos2Gamma, m_fCosGamma, m_fSinGamma);
+    // float tempChannels[5 * nSamples];
 
-    for (unsigned niSample = 0; niSample < nSamples; niSample++) {
-        pBFSrcDst->m_ppfChannels[kR][niSample] = tempChannels[nSamples * 2 + niSample];
-        pBFSrcDst->m_ppfChannels[kS][niSample] = tempChannels[nSamples * 3 + niSample];
-        pBFSrcDst->m_ppfChannels[kT][niSample] = tempChannels[nSamples + niSample];
-        pBFSrcDst->m_ppfChannels[kU][niSample] = tempChannels[nSamples * 4 + niSample];
-        pBFSrcDst->m_ppfChannels[kV][niSample] = tempChannels[niSample];
-    }
+    // for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+    //     tempChannels[nSamples * 2 + niSample] = pBFSrcDst->m_ppfChannels[kR][niSample];
+    //     tempChannels[nSamples * 3 + niSample] = pBFSrcDst->m_ppfChannels[kS][niSample];
+    //     tempChannels[nSamples + niSample] = pBFSrcDst->m_ppfChannels[kT][niSample];
+    //     tempChannels[nSamples * 4 + niSample] = pBFSrcDst->m_ppfChannels[kU][niSample];
+    //     tempChannels[niSample] = pBFSrcDst->m_ppfChannels[kV][niSample];
+    // }
+
+    // processOrder2(tempChannels, nSamples, m_fSin2Alpha, m_fCos2Alpha, m_fSinAlpha, m_fCosAlpha, m_fSinBeta, m_fCosBeta, m_fCos2Beta, m_fSin2Gamma, m_fCos2Gamma, m_fCosGamma, m_fSinGamma);
+
+    // for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+    //     pBFSrcDst->m_ppfChannels[kR][niSample] = tempChannels[nSamples * 2 + niSample];
+    //     pBFSrcDst->m_ppfChannels[kS][niSample] = tempChannels[nSamples * 3 + niSample];
+    //     pBFSrcDst->m_ppfChannels[kT][niSample] = tempChannels[nSamples + niSample];
+    //     pBFSrcDst->m_ppfChannels[kU][niSample] = tempChannels[nSamples * 4 + niSample];
+    //     pBFSrcDst->m_ppfChannels[kV][niSample] = tempChannels[niSample];
+    // }
 }
 
 extern "C" {
@@ -2332,6 +2332,7 @@ bool CAmbisonicEncoderDist::Configure(unsigned nOrder, bool b3D, unsigned nSampl
         return false;
     m_nSampleRate = nSampleRate;
     m_nDelayBufferLength = (unsigned)((float)knMaxDistance / knSpeedOfSound * m_nSampleRate + 0.5f);
+    std::cout << "size of m_pfDelayBuffer: "
     if(m_pfDelayBuffer)
         delete [] m_pfDelayBuffer;
     m_pfDelayBuffer = new float[m_nDelayBufferLength];
@@ -2466,6 +2467,10 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
     for (int i = 0 ; i < m_pfCoeff.size(); ++i) {
         tempCoeff[i] = m_pfCoeff[i];
     }
+    std::cout << "size of m_pfDelayBuffer: " << m_nDelayBufferLength * sizeof(float) << std::endl;
+    std::cout << "size of pfSrc: " << 1024 * sizeof(float) << std::endl;
+    std::cout << "size of m_pfCoeff: " << m_pfCoeff.size() * sizeof(float) << std::endl;
+    std::cout << "size of tempChannels" << m_nChannelCount * nSamples * sizeof(float) << std::endl;
     encoderDistProcess(m_pfDelayBuffer, pfSrc, m_nIn, m_nOutA, m_nOutB, m_fInteriorGain, tempCoeff, m_fExteriorGain, m_nDelayBufferLength, tempChannels, nSamples, m_fDelay, m_nChannelCount);
     for (int j = 0 ; j < m_nChannelCount; ++j) {
         for (int i = 0; i < nSamples; ++i) {
