@@ -3090,7 +3090,7 @@ void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
         tempAmbEncoderFront[iChannel] = m_AmbEncoderFront[iChannel];
     }
 
-    zoomerProcess(tempChannels, tempAmbEncoderFront_weighted, tempAmbEncoderFront, nSamples, m_nChannelCount, m_fZoomBlend, m_fZoom, m_AmbFrontMic);
+    zoomerProcess(tempChannels, tempAmbEncoderFront_weighted, tempAmbEncoderFront, nSamples, m_nChannelCount, m_fZoomBlend, m_fZoom, m_AmbFrontMic, m_fZoomRed);
 
     for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
         for (unsigned niSample = 0; niSample < nSamples; niSample++) {
