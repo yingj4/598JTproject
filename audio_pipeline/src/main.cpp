@@ -1588,7 +1588,7 @@ processOrder1(float* tempChannels, unsigned nSamples, float m_fSinAlpha, float m
                             + tempChannels[niSample] * m_fSinGamma;
 
         tempChannels[nSamples * 2 + niSample] = tempX;
-        tempChannels[kY][niSample] = tempY;
+        tempChannels[niSample] = tempY;
         tempChannels[nSamples + niSample] = tempZ;
     }
 }
