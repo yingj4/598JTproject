@@ -2009,7 +2009,7 @@ void processorFilter(float* m_pfScratchBufferA, unsigned m_nFFTSize, unsigned m_
     // In the case of the 0th order signal (W channel) this takes the form of a delay
     // For all other channels shelf filters are used
     memset(m_pfScratchBufferA, 0, m_nFFTSize * sizeof(float));
-loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopFil1:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
 
         iChannelOrder = int(sqrt(niChannel));    //get the order of the current channel
@@ -2018,7 +2018,7 @@ loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++
         memset(&m_pfScratchBufferA[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
         kiss_fftr(m_pFFT_psych_cfg, m_pfScratchBufferA, m_pcpScratch);
         // Perform the convolution in the frequency domain
-        for(unsigned ni = 0; ni < m_nFFTBins; ni++)
+loopFil2:        for(unsigned ni = 0; ni < m_nFFTBins; ni++)
         {
             cpTemp.r = m_pcpScratch[ni].r * m_ppcpPsychFilters[iChannelOrder * m_nFFTBins + ni].r
                         - m_pcpScratch[ni].i * m_ppcpPsychFilters[iChannelOrder * m_nFFTBins + ni].i;
@@ -2028,10 +2028,10 @@ loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++
         }
         // Convert from frequency domain back to time domain
         kiss_fftri(m_pIFFT_psych_cfg, m_pcpScratch, m_pfScratchBufferA);
-        for(unsigned ni = 0; ni < m_nFFTSize; ni++)
+loopFil3:        for(unsigned ni = 0; ni < m_nFFTSize; ni++)
             m_pfScratchBufferA[ni] *= m_fFFTScaler;
         memcpy(&tempChannels[niChannel * nSamples], m_pfScratchBufferA, m_nBlockSize * sizeof(float));
-        for(unsigned ni = 0; ni < m_nOverlapLength; ni++)
+loopFil4:        for(unsigned ni = 0; ni < m_nOverlapLength; ni++)
         {
             tempChannels[niChannel * nSamples + ni] += m_pfOverlap[niChannel * m_nOverlapLength + ni];
         }
@@ -2988,28 +2988,58 @@ float CAmbisonicZoomer::GetZoom()
 }
 
 extern "C" {
-void zoomerProcess(float* tempChannels, unsigned nSamples, ) {
-    loopZproc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+void zoomerProcess(float* tempChannels, float* m_AmbEncoderFront_weighted, float* m_AmbEncoderFront, unsigned nSamples, unsigned m_nChannelCount, float m_fZoomBlend, float m_fZoom, float m_AmbFrontMic, float m_fZoomBlend) {
+loopZproc1:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         float fMic = 0.f;
 
-        for(unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++)
+loopZproc2:        for(unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++)
         {
             // virtual microphone with polar pattern narrowing as Ambisonic order increases
-            fMic += m_AmbEncoderFront_weighted[iChannel] * pBFSrcDst->m_ppfChannels[iChannel][niSample];
+            fMic += m_AmbEncoderFront_weighted[iChannel] * tempChannels[iChannel * nSamples + niSample];
         }
-        for(unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++)
+loopZproc3:        for(unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++)
         {
-            if(std::abs(m_AmbEncoderFront[iChannel])>1e-6)
-            {
-                // Blend original channel with the virtual microphone pointed directly to the front
-                // Only do this for Ambisonics components that aren't zero for an encoded frontal source
-                pBFSrcDst->m_ppfChannels[iChannel][niSample] = (m_fZoomBlend * pBFSrcDst->m_ppfChannels[iChannel][niSample]
-                    + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend + std::fabs(m_fZoom)*m_AmbFrontMic);
+            // if(std::abs(m_AmbEncoderFront[iChannel])>1e-6)
+            // {
+            //     // Blend original channel with the virtual microphone pointed directly to the front
+            //     // Only do this for Ambisonics components that aren't zero for an encoded frontal source
+            //     tempChannels[iChannel * nSamples + niSample] = (m_fZoomBlend * tempChannels[iChannel * nSamples + niSample]
+            //         + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend + std::fabs(m_fZoom)*m_AmbFrontMic);
+            // }
+            // else{
+            //     // reduce the level of the Ambisonic components that are zero for a frontal source
+            //     tempChannels[iChannel * nSamples + niSample] = tempChannels[iChannel * nSamples + niSample] * m_fZoomRed;
+            // }
+            if (m_AmbEncoderFront[iChannel] >= 0) {
+                if (m_AmbEncoderFront[iChannel] > 1e-6) {
+                    if (m_fZoom >= 0) {
+                        tempChannels[iChannel * nSamples + niSample] = (m_fZoomBlend * tempChannels[iChannel * nSamples + niSample]
+                        + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend + m_fZoom*m_AmbFrontMic);
+                    }
+                    else {
+                        tempChannels[iChannel * nSamples + niSample] = (m_fZoomBlend * tempChannels[iChannel * nSamples + niSample]
+                        + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend - m_fZoom*m_AmbFrontMic);
+                    }
+                }
+                else {
+                    tempChannels[iChannel * nSamples + niSample] = tempChannels[iChannel * nSamples + niSample] * m_fZoomRed;
+                }
             }
-            else{
-                // reduce the level of the Ambisonic components that are zero for a frontal source
-                pBFSrcDst->m_ppfChannels[iChannel][niSample] = pBFSrcDst->m_ppfChannels[iChannel][niSample] * m_fZoomRed;
+            else {
+                f ((-m_AmbEncoderFront[iChannel]) > 1e-6) {
+                    if (m_fZoom >= 0) {
+                        tempChannels[iChannel * nSamples + niSample] = (m_fZoomBlend * tempChannels[iChannel * nSamples + niSample]
+                        + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend + m_fZoom*m_AmbFrontMic);
+                    }
+                    else {
+                        tempChannels[iChannel * nSamples + niSample] = (m_fZoomBlend * tempChannels[iChannel * nSamples + niSample]
+                        + m_AmbEncoderFront[iChannel]*m_fZoom*fMic) / (m_fZoomBlend - m_fZoom*m_AmbFrontMic);
+                    }
+                }
+                else {
+                    tempChannels[iChannel * nSamples + niSample] = tempChannels[iChannel * nSamples + niSample] * m_fZoomRed;
+                }
             }
         }
     }
@@ -3042,6 +3072,31 @@ void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
 //             }
 //         }
 //     }
+    float tempChannels[m_nChannelCount * nSamples];
+    float tempAmbEncoderFront_weighted[m_AmbEncoderFront_weighted.size()];
+    float tempAmbEncoderFront[m_AmbEncoderFront.size()];
+
+    for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
+        for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+            tempChannels[iChannel * nSamples + niSample] = pBFSrcDst->m_ppfChannels[iChannel][niSample];
+        }
+    }
+
+    for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
+        tempAmbEncoderFront_weighted[iChannel] = m_AmbEncoderFront_weighted[iChannel];
+    }
+
+    for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
+        tempAmbEncoderFront[iChannel] = m_AmbEncoderFront[iChannel];
+    }
+
+    zoomerProcess(tempChannels, tempAmbEncoderFront_weighted, tempAmbEncoderFront, nSamples, m_nChannelCount, m_fZoomBlend, m_fZoom, m_AmbFrontMic, m_fZoomBlend);
+
+    for (unsigned iChannel=0; iChannel<m_nChannelCount; iChannel++) {
+        for (unsigned niSample = 0; niSample < nSamples; niSample++) {
+            pBFSrcDst->m_ppfChannels[iChannel][niSample] = tempChannels[iChannel * nSamples + niSample];
+        }
+    }
 }
 
 float CAmbisonicZoomer::factorial(unsigned M)
