@@ -3465,7 +3465,7 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
     tempIFFT_cfg = m_pIFFT_cfg.get();
 
     binauralizerProcess(tempBufferA, m_nFFTSize, m_nChannelCount,  tempBufferB, \
-                         m_nBlockSize, tempFFT_cfg, tempScratch, m_nFFTBins, m_ppcpFilters, \
+                         m_nBlockSize, tempFFT_cfg, tempScratch, m_nFFTBins, tempFilters, \
                          tempIFFT_cfg, m_nOverlapLength, tempOverlap, tempChannels, BLOCK_SIZE, tempDst, m_fFFTScaler);
 
     for (unsigned niEar = 0; niEar < 2; niEar++) {
