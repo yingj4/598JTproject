@@ -2332,7 +2332,6 @@ bool CAmbisonicEncoderDist::Configure(unsigned nOrder, bool b3D, unsigned nSampl
         return false;
     m_nSampleRate = nSampleRate;
     m_nDelayBufferLength = (unsigned)((float)knMaxDistance / knSpeedOfSound * m_nSampleRate + 0.5f);
-    std::cout << "size of m_pfDelayBuffer: "
     if(m_pfDelayBuffer)
         delete [] m_pfDelayBuffer;
     m_pfDelayBuffer = new float[m_nDelayBufferLength];
