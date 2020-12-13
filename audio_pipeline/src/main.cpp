@@ -1776,7 +1776,7 @@ void CAmbisonicProcessor::ProcessOrder3_2D(CBFormat* pBFSrcDst, unsigned nSample
 */
 
 extern "C" {
-void processorFilter(float* m_pfScratchBufferA, unsigned m_nFFTSize, unsigned m_nChannelCount, float* tempChannels, unsigned m_nBlockSize, unsigned m_nFFTSize, kiss_fftr_cfg m_pFFT_psych_cfg, kiss_fft_cpx* m_pcpScratch,\
+void processorFilter(float* m_pfScratchBufferA, unsigned m_nFFTSize, unsigned m_nChannelCount, float* tempChannels, unsigned m_nBlockSize, kiss_fftr_cfg m_pFFT_psych_cfg, kiss_fft_cpx* m_pcpScratch,\
                      kiss_fftr_cfg m_pIFFT_psych_cfg, unsigned nSamples, float m_fFFTScaler, kiss_fft_cpx* m_ppcpPsychFilters, unsigned m_nFFTBins, unsigned m_nOverlapLength, float* m_pfOverlap) {
     kiss_fft_cpx cpTemp;
 
@@ -1863,7 +1863,7 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
 
     for (unsigned j = 0 ; j < m_nChannelCount; ++j) {
         for (unsigned i = 0; i < nSamples; ++i) {
-            pfDst->m_ppfChannels[j][i] = tempChannels[j * nSamples + i];
+            pBFSrcDst->m_ppfChannels[j][i] = tempChannels[j * nSamples + i];
         }
     }
 
@@ -1880,17 +1880,17 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
         }
     }
 
-    processorFilter(m_pfScratchBufferA, m_nFFTSize, m_nChannelCount, tempChannels, m_nBlockSize, m_nFFTSize, m_pFFT_psych_cfg, m_pcpScratch, m_pIFFT_psych_cfg, nSamples, m_fFFTScaler, m_ppcpPsychFilters, m_nFFTBins, m_nOverlapLength, m_pfOverlap);
+    processorFilter(m_pfScratchBufferA, m_nFFTSize, m_nChannelCount, tempChannels, m_nBlockSize, m_pFFT_psych_cfg, m_pcpScratch, m_pIFFT_psych_cfg, nSamples, m_fFFTScaler, m_ppcpPsychFilters, m_nFFTBins, m_nOverlapLength, m_pfOverlap);
 
     for (unsigned j = 0 ; j < m_nChannelCount; ++j) {
         for (unsigned i = 0; i < nSamples; ++i) {
-            tempChannels[j * nSamples + i] = pfDst->m_ppfChannels[j][i];
+            tempChannels[j * nSamples + i] = pBFSrcDst->m_ppfChannels[j][i];
         }
     }
 
     for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++) {
         for(unsigned ni = 0; ni < m_nOverlapLength; ni++) {
-            m_pfOverlap[niChannel][ni] = m_pfOverlap[niChannel * m_nOverlapLength + ni];
+            m_pfOverlap[niChannel][ni] = tempOverlap[niChannel * m_nOverlapLength + ni];
         }
     }
 }
