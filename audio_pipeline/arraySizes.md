@@ -1,6 +1,8 @@
 # Array Sizes and Their Function Calls
 
-This file contains the array sizes and their function calls. The first column indicates whether it is encoding or decoding, the second column indicates their function calls, the third column shows the array names, the fourth function tells the total size of the array, and the final column is the size of a single element in the array. The size of a float is 4B, and the size of a kiss_fft_cpx structure is 8B. The size of the array and the size of a single element in the array are used for Aladdin configuration.
+This file contains the array sizes and their function calls. The first column indicates whether it is encoding or decoding, the second column indicates their function calls, the third column shows the array names, the fourth function tells the total size of the array, and the final column is the size of a single element in the array.<br />
+ The size of a float is 4B, the size of a kiss_fft_cpx structure is 8B, and the size of a kiss_fftr_state structure is 24B.<br />
+The size of the array and the size of a single element in the array are used for Aladdin configuration.
 
 | Encode / Decode | Function Name | Array Name | Total Size | Element size |
 |-----------------|---------------|------------|------------|--------------|
