@@ -2112,8 +2112,8 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
     std::cout << "size of m_pfOverlap: " << m_nChannelCount * m_nOverlapLength * sizeof(float) << std::endl;
     std::cout << "size of m_ppcpPsychFilters: " << (m_nOrder + 1) * m_nFFTBins * sizeof(kiss_fft_cpx) << std::endl;
     std::cout << "size of m_pcpScratch: " << m_nFFTBins * sizeof(kiss_fft_cpx) << std::endl;
-    std::cout << "size of m_pFFT_psych_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) << std::endl;
-    std::cout << "size of m_pIFFT_psych_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) << std::endl;
+    std::cout << "size of m_pFFT_psych_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) + sizeof(kiss_fft_state) << std::endl;
+    std::cout << "size of m_pIFFT_psych_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) + sizeof(kiss_fft_state) << std::endl;
     processorFilter(m_pfScratchBufferA, m_nFFTSize, m_nChannelCount, tempChannels, m_nBlockSize, m_pFFT_psych_cfg, m_pcpScratch, m_pIFFT_psych_cfg, nSamples, m_fFFTScaler, tempPsychoFilter, m_nFFTBins, m_nOverlapLength, tempOverlap);
 
     for (unsigned j = 0 ; j < m_nChannelCount; ++j) {
@@ -3500,8 +3500,8 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
     std::cout << "size of m_pfOverlap is: "<< 2 * m_nOverlapLength * sizeof(float) << std::endl;
     std::cout << "size of tempChannels is: "<< m_nChannelCount * BLOCK_SIZE * sizeof(float) << std::endl;
     std::cout << "size of ppfDst is: "<< 2 * BLOCK_SIZE * sizeof(float) << std::endl;
-    std::cout << "size of m_pFFT_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) << std::endl;
-    std::cout << "size of m_pIFFT_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) << std::endl;
+    std::cout << "size of m_pFFT_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) + sizeof(kiss_fft_state) << std::endl;
+    std::cout << "size of m_pIFFT_cfg is: " << sizeof(kiss_fftr_state) + 2 * sizeof(kiss_fft_cpx) + sizeof(kiss_fft_state) << std::endl;
     binauralizerProcess(tempBufferA, m_nFFTSize, m_nChannelCount,  tempBufferB, \
                          m_nBlockSize, tempFFT_cfg, tempScratch, m_nFFTBins, tempFilters, \
                          tempIFFT_cfg, m_nOverlapLength, tempOverlap, tempChannels, BLOCK_SIZE, tempDst, m_fFFTScaler);
