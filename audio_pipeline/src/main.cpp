@@ -1451,19 +1451,19 @@ bool CAmbisonicProcessor::Configure(unsigned nOrder, bool b3D, unsigned nBlockSi
 
     //Allocate buffers
         m_pfOverlap = new float*[m_nChannelCount];
-loopPconfa:    for(unsigned i=0; i<m_nChannelCount; i++)
+    for(unsigned i=0; i<m_nChannelCount; i++)
         m_pfOverlap[i] = new float[m_nOverlapLength];
 
     m_pfScratchBufferA = new float[m_nFFTSize];
     m_ppcpPsychFilters = new kiss_fft_cpx*[m_nOrder+1];
-loopPconfb:   for(unsigned i = 0; i <= m_nOrder; i++)
+   for(unsigned i = 0; i <= m_nOrder; i++)
         m_ppcpPsychFilters[i] = new kiss_fft_cpx[m_nFFTBins];
 
     m_pcpScratch = new kiss_fft_cpx[m_nFFTBins];
 
     //Allocate temporary buffers for retrieving taps of psychoacoustic opimisation filters
     std::vector<std::unique_ptr<float[]>> pfPsychIR;
-loopPconfc:    for(unsigned i = 0; i <= m_nOrder; i++)
+    for(unsigned i = 0; i <= m_nOrder; i++)
     {
         pfPsychIR.emplace_back(new float[m_nTaps]);
     }
@@ -1476,7 +1476,7 @@ loopPconfc:    for(unsigned i = 0; i <= m_nOrder; i++)
 
     // get impulse responses for psychoacoustic optimisation based on playback system (2D or 3D) and playback order (1 to 3)
     //Convert from short to float representation
-loopPconfd:    for (unsigned i_m = 0; i_m <= m_nOrder; i_m++){
+    for (unsigned i_m = 0; i_m <= m_nOrder; i_m++){
         for(unsigned i = 0; i < m_nTaps; i++)
             if(m_b3D){
                 switch(m_nOrder){
@@ -1572,7 +1572,7 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
     This is different to the rotations obtained from the video, which are around z, y' then x''.
     The rotation equations used here work for third order. However, for higher orders a recursive algorithm
     should be considered.*/
-loopROa:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
         m_pfTempSample[kY] = -pBFSrcDst->m_ppfChannels[kX][niSample] * m_fSinAlpha
@@ -1605,7 +1605,7 @@ void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSample
 {
     float fSqrt3 = sqrt(3.f);
 
-loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
         m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Alpha
@@ -1660,7 +1660,7 @@ void CAmbisonicProcessor::ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSample
         float fSqrt15 = sqrt(15.f);
         float fSqrt5_2 = sqrt(5.f/2.f);
 
-loopROc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
         m_pfTempSample[kQ] = - pBFSrcDst->m_ppfChannels[kP][niSample] * m_fSin3Alpha
@@ -1829,7 +1829,7 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
     // In the case of the 0th order signal (W channel) this takes the form of a delay
     // For all other channels shelf filters are used
     memset(m_pfScratchBufferA, 0, m_nFFTSize * sizeof(float));
-loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
 
         iChannelOrder = int(sqrt(niChannel));    //get the order of the current channel
@@ -2068,7 +2068,7 @@ void CAmbisonicEncoder::Process(float* pfSrc, unsigned nSamples, CBFormat* pfDst
     unsigned niChannel = 0;
     unsigned niSample = 0;
     // printf("Encoder::Process\n");
-loopEproc:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < nSamples; niSample++)
         {
@@ -2215,7 +2215,7 @@ void CAmbisonicEncoderDist::Process(float* pfSrc, unsigned nSamples, CBFormat* p
     unsigned niSample = 0;
     float fSrcSample = 0;
 
-loopEDproc:    for(niSample = 0; niSample < nSamples; niSample++)
+    for(niSample = 0; niSample < nSamples; niSample++)
     {
         //Store
         m_pfDelayBuffer[m_nIn] = pfSrc[niSample];
@@ -2285,7 +2285,7 @@ void CAmbisonicSpeaker::Process(CBFormat* pBFSrc, unsigned nSamples, float* pfDs
     unsigned niChannel = 0;
     unsigned niSample = 0;
     memset(pfDst, 0, nSamples * sizeof(float));
-loopSproc:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         float *in = pBFSrc->m_ppfChannels[niChannel];
         float *out = pfDst;
@@ -2767,7 +2767,7 @@ float CAmbisonicZoomer::GetZoom()
 
 void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
 {
-loopZproc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         float fMic = 0.f;
 
@@ -2838,7 +2838,7 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
     m_nOverlapLength = m_nBlockSize < m_nTaps ? m_nBlockSize - 1 : m_nTaps - 1;
     //How large does the FFT need to be
     m_nFFTSize = 1;
-    loopBconf1: while(m_nFFTSize < (m_nBlockSize + m_nTaps + m_nOverlapLength))
+    while(m_nFFTSize < (m_nBlockSize + m_nTaps + m_nOverlapLength))
         m_nFFTSize <<= 1;
     //How many bins is that
     m_nFFTBins = m_nFFTSize / 2 + 1;
@@ -2856,21 +2856,21 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
 
     //Allocate temporary buffers for retrieving taps from mit_hrtf_lib
     float* pfHRTF[2];
-    loopBconf2: for(niEar = 0; niEar < 2; niEar++)
+    for(niEar = 0; niEar < 2; niEar++)
         pfHRTF[niEar] = new float[m_nTaps];
 
     //Allocate buffers for HRTF accumulators
     float** ppfAccumulator[2];
-    loopBconf3: for(niEar = 0; niEar < 2; niEar++)
+    for(niEar = 0; niEar < 2; niEar++)
     {
         ppfAccumulator[niEar] = new float*[m_nChannelCount];
-        loopBconf4: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
             ppfAccumulator[niEar][niChannel] = new float[m_nTaps]();
     }
 
-    loopBconf5: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
-        loopBconf6: for(niSpeaker = 0; niSpeaker < nSpeakers; niSpeaker++)
+        for(niSpeaker = 0; niSpeaker < nSpeakers; niSpeaker++)
         {
             //What is the position of the current speaker
             PolarPoint position = m_AmbDecoder.GetPosition(niSpeaker);
@@ -2915,12 +2915,12 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
 
     float* pfLeftEar90;
     pfLeftEar90 = new float[m_nTaps]();
-    loopBconf7: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
-        loopBconf8: for(niTap = 0; niTap < m_nTaps; niTap++)
+    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+    for(niTap = 0; niTap < m_nTaps; niTap++)
             pfLeftEar90[niTap] += myEncoder.GetCoefficient(niChannel) * ppfAccumulator[0][niChannel][niTap];
 
     //Find the maximum value for a source encoded at 90degrees
-    loopBconf9: for(niTap = 0; niTap < m_nTaps; niTap++)
+    for(niTap = 0; niTap < m_nTaps; niTap++)
     {
         float val = fabs(pfLeftEar90[niTap]);
         fMax = val > fMax ? val : fMax;
@@ -2930,11 +2930,11 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
     float fUpperSample = 1.f;
     float fScaler = fUpperSample / fMax;
     fScaler *= 0.35f;
-    loopBconf10: for(niEar = 0; niEar < 2; niEar++)
+    for(niEar = 0; niEar < 2; niEar++)
     {
-        loopBconf11: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
         {
-            loopBconf12: for(niTap = 0; niTap < m_nTaps; niTap++)
+            for(niTap = 0; niTap < m_nTaps; niTap++)
             {
                 ppfAccumulator[niEar][niChannel][niTap] *= fScaler;
             }
@@ -2942,9 +2942,9 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
     }
 
     //Convert frequency domain filters
-    loopBconf13: for(niEar = 0; niEar < 2; niEar++)
+    for(niEar = 0; niEar < 2; niEar++)
     {
-        loopBconf14: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
         {
             memcpy(m_pfScratchBufferA.data(), ppfAccumulator[niEar][niChannel], m_nTaps * sizeof(float));
             memset(&m_pfScratchBufferA[m_nTaps], 0, (m_nFFTSize - m_nTaps) * sizeof(float));
@@ -2952,12 +2952,12 @@ bool CAmbisonicBinauralizer::Configure(unsigned nOrder,
         }
     }
 
-    loopBconf15: for(niEar = 0; niEar < 2; niEar++)
+    for(niEar = 0; niEar < 2; niEar++)
         delete [] pfHRTF[niEar];
 
-    loopBconf16: for(niEar = 0; niEar < 2; niEar++)
+    for(niEar = 0; niEar < 2; niEar++)
     {
-        loopBconf17: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+        for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
             delete [] ppfAccumulator[niEar][niChannel];
         delete [] ppfAccumulator[niEar];
     }
@@ -3052,15 +3052,15 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
     {
         // Perform the convolution on both ears. Potentially more realistic results but requires double the number of
         // convolutions.
-        loopBproc1: for(niEar = 0; niEar < 2; niEar++)
+        for(niEar = 0; niEar < 2; niEar++)
         {
             memset(m_pfScratchBufferA.data(), 0, m_nFFTSize * sizeof(float));
-            loopBproc2: for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+            for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
             {
                 memcpy(m_pfScratchBufferB.data(), pBFSrc->m_ppfChannels[niChannel], m_nBlockSize * sizeof(float));
                 memset(&m_pfScratchBufferB[m_nBlockSize], 0, (m_nFFTSize - m_nBlockSize) * sizeof(float));
                 kiss_fftr(m_pFFT_cfg.get(), m_pfScratchBufferB.data(), m_pcpScratch.get());
-                loopBproc3: for(ni = 0; ni < m_nFFTBins; ni++)
+                for(ni = 0; ni < m_nFFTBins; ni++)
                 {
                     cpTemp.r = m_pcpScratch[ni].r * m_ppcpFilters[niEar][niChannel][ni].r
                                 - m_pcpScratch[ni].i * m_ppcpFilters[niEar][niChannel][ni].i;
@@ -3069,13 +3069,13 @@ void CAmbisonicBinauralizer::Process(CBFormat* pBFSrc,
                     m_pcpScratch[ni] = cpTemp;
                 }
                 kiss_fftri(m_pIFFT_cfg.get(), m_pcpScratch.get(), m_pfScratchBufferB.data());
-                loopBproc4: for(ni = 0; ni < m_nFFTSize; ni++)
+                for(ni = 0; ni < m_nFFTSize; ni++)
                     m_pfScratchBufferA[ni] += m_pfScratchBufferB[ni];
             }
-            loopBproc5: for(ni = 0; ni < m_nFFTSize; ni++)
+            for(ni = 0; ni < m_nFFTSize; ni++)
                 m_pfScratchBufferA[ni] *= m_fFFTScaler;
             memcpy(ppfDst[niEar], m_pfScratchBufferA.data(), m_nBlockSize * sizeof(float));
-            loopBproc6: for(ni = 0; ni < m_nOverlapLength; ni++)
+            for(ni = 0; ni < m_nOverlapLength; ni++)
                 ppfDst[niEar][ni] += m_pfOverlap[niEar][ni];
             memcpy(m_pfOverlap[niEar].data(), &m_pfScratchBufferA[m_nBlockSize], m_nOverlapLength * sizeof(float));
         }
@@ -3159,7 +3159,7 @@ void CAmbisonicBinauralizer::AllocateBuffers()
     m_pIFFT_cfg.reset(kiss_fftr_alloc(m_nFFTSize, 1, 0, 0));
 
     //Allocate the FFTBins for each channel, for each ear
-loopBalloc:    for(unsigned niEar = 0; niEar < 2; niEar++)
+    for(unsigned niEar = 0; niEar < 2; niEar++)
     {
         m_ppcpFilters[niEar].resize(m_nChannelCount);
         for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
