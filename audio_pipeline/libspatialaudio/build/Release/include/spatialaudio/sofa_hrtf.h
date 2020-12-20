@@ -19,7 +19,7 @@ public:
     ~SOFA_HRTF();
     bool get(float f_azimuth, float f_elevation, float **pfHRTF);
 
-private:
+// private:
     struct MYSOFA_EASY *hrtf;
 
     unsigned i_filterExtraLength;

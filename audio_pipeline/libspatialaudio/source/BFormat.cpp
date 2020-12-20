@@ -92,7 +92,7 @@ CBFormat& CBFormat::operator += (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopAa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -107,7 +107,7 @@ CBFormat& CBFormat::operator -= (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopNa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -122,7 +122,7 @@ CBFormat& CBFormat::operator *= (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopMa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -137,7 +137,7 @@ CBFormat& CBFormat::operator /= (const CBFormat &bf)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopDa:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -152,7 +152,7 @@ CBFormat& CBFormat::operator += (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopAb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -167,7 +167,7 @@ CBFormat& CBFormat::operator -= (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopNb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -182,7 +182,7 @@ CBFormat& CBFormat::operator *= (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopMb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {
@@ -197,7 +197,7 @@ CBFormat& CBFormat::operator /= (const float &fValue)
 {
     unsigned niChannel = 0;
     unsigned niSample = 0;
-    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopDb:    for(niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
         for(niSample = 0; niSample < m_nSamples; niSample++)
         {

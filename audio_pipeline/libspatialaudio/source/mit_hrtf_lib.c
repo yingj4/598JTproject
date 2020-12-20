@@ -17,10 +17,15 @@
 #ifdef HAVE_MIT_HRTF
 
 #include "../include/mit_hrtf_lib.h"
-#include "normal/mit_hrtf_normal_44100.h"
-#include "normal/mit_hrtf_normal_48000.h"
-#include "normal/mit_hrtf_normal_88200.h"
-#include "normal/mit_hrtf_normal_96000.h"
+// #include "normal/mit_hrtf_normal_44100.h"
+// #include "normal/mit_hrtf_normal_48000.h"
+// #include "normal/mit_hrtf_normal_88200.h"
+// #include "normal/mit_hrtf_normal_96000.h"
+
+#include "mit_hrtf_normal_44100.h"
+#include "mit_hrtf_normal_48000.h"
+#include "mit_hrtf_normal_88200.h"
+#include "mit_hrtf_normal_96000.h"
 
 
 

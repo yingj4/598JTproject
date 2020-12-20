@@ -88,19 +88,19 @@ bool CAmbisonicProcessor::Configure(unsigned nOrder, bool b3D, unsigned nBlockSi
 
     //Allocate buffers
         m_pfOverlap = new float*[m_nChannelCount];
-    for(unsigned i=0; i<m_nChannelCount; i++)
+loopPconfa:    for(unsigned i=0; i<m_nChannelCount; i++)
         m_pfOverlap[i] = new float[m_nOverlapLength];
 
     m_pfScratchBufferA = new float[m_nFFTSize];
     m_ppcpPsychFilters = new kiss_fft_cpx*[m_nOrder+1];
-    for(unsigned i = 0; i <= m_nOrder; i++)
+loopPconfb:   for(unsigned i = 0; i <= m_nOrder; i++)
         m_ppcpPsychFilters[i] = new kiss_fft_cpx[m_nFFTBins];
 
     m_pcpScratch = new kiss_fft_cpx[m_nFFTBins];
 
     //Allocate temporary buffers for retrieving taps of psychoacoustic opimisation filters
     std::vector<std::unique_ptr<float[]>> pfPsychIR;
-    for(unsigned i = 0; i <= m_nOrder; i++)
+loopPconfc:    for(unsigned i = 0; i <= m_nOrder; i++)
     {
         pfPsychIR.emplace_back(new float[m_nTaps]);
     }
@@ -113,7 +113,7 @@ bool CAmbisonicProcessor::Configure(unsigned nOrder, bool b3D, unsigned nBlockSi
 
     // get impulse responses for psychoacoustic optimisation based on playback system (2D or 3D) and playback order (1 to 3)
     //Convert from short to float representation
-    for (unsigned i_m = 0; i_m <= m_nOrder; i_m++){
+loopPconfd:    for (unsigned i_m = 0; i_m <= m_nOrder; i_m++){
         for(unsigned i = 0; i < m_nTaps; i++)
             if(m_b3D){
                 switch(m_nOrder){
@@ -209,7 +209,7 @@ void CAmbisonicProcessor::ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSample
     This is different to the rotations obtained from the video, which are around z, y' then x''.
     The rotation equations used here work for third order. However, for higher orders a recursive algorithm
     should be considered.*/
-    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+loopROa:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
         m_pfTempSample[kY] = -pBFSrcDst->m_ppfChannels[kX][niSample] * m_fSinAlpha
@@ -242,7 +242,7 @@ void CAmbisonicProcessor::ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSample
 {
     float fSqrt3 = sqrt(3.f);
 
-    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+loopROb:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
         m_pfTempSample[kV] = - pBFSrcDst->m_ppfChannels[kU][niSample] * m_fSin2Alpha
@@ -297,7 +297,7 @@ void CAmbisonicProcessor::ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSample
         float fSqrt15 = sqrt(15.f);
         float fSqrt5_2 = sqrt(5.f/2.f);
 
-    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+loopROc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         // Alpha rotation
         m_pfTempSample[kQ] = - pBFSrcDst->m_ppfChannels[kP][niSample] * m_fSin3Alpha
@@ -423,7 +423,7 @@ void CAmbisonicProcessor::ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSample
     // In the case of the 0th order signal (W channel) this takes the form of a delay
     // For all other channels shelf filters are used
     memset(m_pfScratchBufferA, 0, m_nFFTSize * sizeof(float));
-    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
+loopFil:    for(unsigned niChannel = 0; niChannel < m_nChannelCount; niChannel++)
     {
 
         iChannelOrder = int(sqrt(niChannel));    //get the order of the current channel

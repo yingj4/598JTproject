@@ -84,7 +84,7 @@ public:
     */
     virtual float GetGain();
 
-protected:
+// protected:
     std::vector<float> m_pfCoeff;
     std::vector<float> m_pfOrderWeights;
     PolarPoint m_polPosition;

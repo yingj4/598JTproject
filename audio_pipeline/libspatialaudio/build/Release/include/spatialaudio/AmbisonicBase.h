@@ -56,7 +56,7 @@ public:
     */
     virtual void Refresh() = 0;
 
-protected:
+// protected:
     unsigned m_nOrder;
     bool m_b3D;
     unsigned m_nChannelCount;

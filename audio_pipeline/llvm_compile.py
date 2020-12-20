@@ -22,15 +22,15 @@ def main (directory, source):
   TRACER_HOME = os.getenv('TRACER_HOME')
   LLVM_HOME = os.getenv('TRACER_HOME')
 
-  source_file = source + '.c'
+  source_file = source + '.cpp'
   # os.system('%s/bin/get-labeled-stmts triad.c -- -I%s/lib/clang/3.4' % (TRACER_HOME, LLVM_HOME))
-  os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include' % (TRACER_HOME, LLVM_HOME))
+  os.system('%s/ast-pass/get-labeled-stmts triad.c -- -I%s/lib/clang/6.0.1/include -I./include -I./libspatialaudio/build/Release/include/spatialaudio/' % (TRACER_HOME, LLVM_HOME))
   # os.system('clang -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
   #           ' -fno-unroll-loops -fno-inline -fno-builtin -emit-llvm -o ' + \
   #           obj + ' '  + source_file)
-  os.system(('%s/bin/clang -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
+  os.system(('%s/bin/clang++ -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
             ' -fno-unroll-loops -fno-inline -emit-llvm -o ' + \
-            obj + ' '  + source_file) % (LLVM_HOME))
+            obj + ' '  + source_file + '-I./libspatialaudio/build/Release/include/spatialaudio/ -I./include') % (LLVM_HOME))
   # os.system('opt -disable-inlining -S -load=' + TRACER_HOME + \
   #           '/lib/full_trace.so -fulltrace -labelmapwriter ' + obj + ' -o ' + opt_obj)
   os.system(('%s/bin/opt -disable-inlining -S -load=' + TRACER_HOME + \
@@ -42,7 +42,7 @@ def main (directory, source):
   # os.system('llc -O0 -disable-fp-elim -filetype=asm -o full.s full.llvm')
   os.system(('%s/bin/llc -O0 -disable-fp-elim -filetype=asm -o full.s full.llvm') % (LLVM_HOME))
   # os.system('gcc -static -O0 -fno-inline -o ' + executable + ' full.s -lm -lz')
-  os.system('g++ -static -O0 -fno-inline -o ' + executable + ' full.s -lm -lz -no-pie')
+  os.system('g++ -static -O0 -fno-inline -o ' + executable + ' full.s -lm -lz -no-pie -lpthread')
   os.system('./' + executable)
 
 if __name__ == '__main__':

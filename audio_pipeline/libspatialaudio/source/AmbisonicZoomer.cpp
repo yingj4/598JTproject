@@ -87,7 +87,7 @@ float CAmbisonicZoomer::GetZoom()
 
 void CAmbisonicZoomer::Process(CBFormat* pBFSrcDst, unsigned nSamples)
 {
-    for(unsigned niSample = 0; niSample < nSamples; niSample++)
+loopZproc:    for(unsigned niSample = 0; niSample < nSamples; niSample++)
     {
         float fMic = 0.f;
 

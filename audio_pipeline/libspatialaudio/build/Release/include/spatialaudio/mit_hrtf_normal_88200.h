@@ -14,7 +14,9 @@
 /*############################################################################*/
 
 
-#include "../mit_hrtf_filter.h"
+// #include "../mit_hrtf_filter.h"
+
+#include "mit_hrtf_filter.h"
 
 const mit_hrtf_filter_set_88 normal_88 = 
 {

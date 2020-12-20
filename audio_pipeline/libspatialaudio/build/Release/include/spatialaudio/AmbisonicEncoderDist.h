@@ -61,7 +61,7 @@ public:
     */
     float GetRoomRadius();
 
-protected:
+// protected:
     unsigned m_nSampleRate;
     float m_fDelay;
     int m_nDelay;

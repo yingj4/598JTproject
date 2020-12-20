@@ -1,0 +1,7 @@
+$TRACER_HOME/build/ast-pass/get-labeled-stmts src/main.cpp -- -I${LLVM_HOME}/lib/clang/6.0.0/include  -Ilibspatialaudio/build/Release/include -Ilibspatialaudio/build/Release/include/spatialaudio -Iinclude/ -Ilibspatialaudio/source/kiss_fft
+clang -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o main-single.llvm src/main.cpp -Ilibspatialaudio/build/Release/include -Ilibspatialaudio/build/Release/include/spatialaudio -Iinclude/ -Ilibspatialaudio/source/kiss_fft
+opt -S -load=${TRACER_HOME}/build/full-trace/full_trace.so -fulltrace -labelmapwriter main-single.llvm -o main-single-opt.llvm
+llvm-link -o main-single-full.llvm main-single-opt.llvm $TRACER_HOME/build/profile-func/trace_logger.llvm
+llc -filetype=asm -o main-single-full.s main-single-full.llvm
+g++ -fno-inline -o main-single main-single-full.s -lm -lz -no-pie -lpthread
+./main-single 10 encode

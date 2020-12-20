@@ -89,7 +89,7 @@ public:
 
     friend class CAmbisonicProcessor;
 
-private:
+// private:
     /** rotation around the Z axis (yaw) */
     float fYaw;
     /** rotation around the Y axis (pitch) */
@@ -145,7 +145,7 @@ public:
     */
     void Process(CBFormat* pBFSrcDst, unsigned nSamples);
 
-private:
+// private:
     void ProcessOrder1_3D(CBFormat* pBFSrcDst, unsigned nSamples);
     void ProcessOrder2_3D(CBFormat* pBFSrcDst, unsigned nSamples);
     void ProcessOrder3_3D(CBFormat* pBFSrcDst, unsigned nSamples);
@@ -155,7 +155,7 @@ private:
 
     void ShelfFilterOrder(CBFormat* pBFSrcDst, unsigned nSamples);
 
-protected:
+// protected:
     Orientation m_orientation;
     float* m_pfTempSample;
 
