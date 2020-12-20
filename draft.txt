@@ -1,0 +1,5 @@
+$LLVM_HOME/bin/clang++ -static -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o main-single.llvm src/main.cpp -I./libspatialaudio/build/Release/include/spatialaudio/ -I./include -I./libspatialaudio/build/Release/include/ -I./libspatialaudio/source/kiss_fft/
+${LLVM_HOME}/bin/opt -S -load=${TRACER_HOME}/full-trace/full_trace.so -labelmapwriter -trace-all-callees main-single.llvm -o main-single-opt.llvm -fulltrace
+$LLVM_HOME/bin/llvm-link -o main-single-full.llvm main-single-opt.llvm $TRACER_HOME/profile-func/trace_logger.llvm
+$LLVM_HOME/bin/llc -O0 -disable-fp-elim -filetype=asm -o main-single.s main-single-full.llvm
+g++ -static -O0 -fno-inline -o main-single main-single.s -lm -lz -no-pie -lpthread

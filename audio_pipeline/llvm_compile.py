@@ -30,10 +30,10 @@ def main (directory, source):
   #           obj + ' '  + source_file)
   os.system(('%s/bin/clang++ -static -g -O1 -S -fno-slp-vectorize -fno-vectorize ' + \
             ' -fno-unroll-loops -fno-inline -emit-llvm -o ' + \
-            obj + ' '  + source_file + '-I./libspatialaudio/build/Release/include/spatialaudio/ -I./include') % (LLVM_HOME))
+            obj + ' '  + source_file + '-I./libspatialaudio/build/Release/include/spatialaudio/ -I./include -I./libspatialaudio/build/Release/include/ -I./libspatialaudio/source/kiss_fft/') % (LLVM_HOME))
   # os.system('opt -disable-inlining -S -load=' + TRACER_HOME + \
   #           '/lib/full_trace.so -fulltrace -labelmapwriter ' + obj + ' -o ' + opt_obj)
-  os.system(('%s/bin/opt -disable-inlining -S -load=' + TRACER_HOME + \
+  os.system(('%s/bin/opt -S -load=' + TRACER_HOME + \
             '%s/full-trace/full_trace.so -fulltrace -labelmapwriter ' + obj + ' -o ' + opt_obj) % (LLVM_HOME, TRACER_HOME))
   # os.system('llvm-link -o full.llvm ' + opt_obj + ' ' + \
   #           TRACER_HOME + '/lib/trace_logger.llvm')
