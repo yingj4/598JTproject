@@ -2,7 +2,8 @@
 
 This file contains the array sizes and their function calls. The first column indicates whether it is encoding or decoding, the second column indicates their function calls, the third column shows the array names, the fourth function tells the total size of the array, and the final column is the size of a single element in the array.<br />
  The size of a float is 4B, the size of a kiss_fft_cpx structure is 8B, and the size of a kiss_fftr_state structure is 24B.<br />
-The size of the array and the size of a single element in the array are used for Aladdin configuration.
+The size of the array and the size of a single element in the array are used for Aladdin configuration.<br />
+The reason for the large sizes of `m_pFFT_cfg`, `m_pIFFT_cfg`, `m_pFFT_psycho_cfg` and `m_pIFFT_psycho_cfg` is that they are using pointers. If the sizes are too small, Aladdin will have an error of "out-of-bound".<br />
 
 | Encode / Decode | Function Name | Array Name | Total Size | Element size |
 |-----------------|---------------|------------|------------|--------------|
@@ -22,8 +23,8 @@ The size of the array and the size of a single element in the array are used for
 | Decode | processorFilter | m_pfOverlap | 6400 | 4 |
 | Decode | processorFilter | m_ppcpPsychFilters | 32800 | 8 |
 | Decode | processorFilter | m_pcpScratch | 8200 | 8 |
-| Decode | processorFilter | m_pFFT_psych_cfg | 24 | 24 |
-| Decode | processorFilter | m_pIFFT_psych_cfg | 24 | 24 |
+| Decode | processorFilter | m_pFFT_psych_cfg | 20000 | 24 |
+| Decode | processorFilter | m_pIFFT_psych_cfg | 20000 | 24 |
 |--|--|--|--|--|
 | Decode | zoomerProcess | tempChannels | 65536 | 4 |
 | Decode | zoomerProcess | m_AmbEncoderFront_weighted | 64 | 4 |
@@ -36,5 +37,5 @@ The size of the array and the size of a single element in the array are used for
 | Decode | binauralizerProcess | m_pfOverlap | 1112 | 4 |
 | Decode | binauralizerProcess | tempChannels | 65536 | 4 |
 | Decode | binauralizerProcess | ppfDst | 8192 | 4 |
-| Decode | binauralizerProcess | m_pFFT_cfg | 24 | 24 |
-| Decode | binauralizerProcess | m_pIFFT_cfg | 24 | 24 |
+| Decode | binauralizerProcess | m_pFFT_cfg | 20000 | 24 |
+| Decode | binauralizerProcess | m_pIFFT_cfg | 20000 | 24 |
