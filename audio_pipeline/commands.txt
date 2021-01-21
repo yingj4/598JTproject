@@ -1,0 +1,12 @@
+If I am working on my labtop, I will use these lines of commands.
+
+export TRACER_HOME=/home/yingj4/LLVM-Tracer/build
+export LLVM_HOME=/home/yingj4/llvm-6.0/builtLLVM
+export WORKLOAD=_ZN19CAmbisonicProcessor16ShelfFilterOrderEP8CBFormatj,_ZN19CAmbisonicProcessor16ProcessOrder1_3DEP8CBFormatj
+$TRACER_HOME/ast-pass/get-labeled-stmts src/main.cpp -- -I${LLVM_HOME}/lib/clang/6.0.1/include -Ilibspatialaudio/build/Release/include -Ilibspatialaudio/build/Release/include/spatialaudio -Iinclude/ -Ilibspatialaudio/source/kiss_fft
+$LLVM_HOME/bin/clang++ -static -g -O1 -S -fno-slp-vectorize -fno-vectorize -fno-unroll-loops -fno-inline -emit-llvm -o main-single.llvm src/main.cpp -I./libspatialaudio/build/Release/include/spatialaudio/ -I./include -I./libspatialaudio/build/Release/include/ -I./libspatialaudio/source/kiss_fft/
+${LLVM_HOME}/bin/opt -S -load=${TRACER_HOME}/full-trace/full_trace.so -labelmapwriter -trace-all-callees main-single.llvm -o main-single-opt.llvm -fulltrace -mem2reg
+$LLVM_HOME/bin/llvm-link -o main-single-full.llvm main-single-opt.llvm $TRACER_HOME/profile-func/trace_logger.llvm
+$LLVM_HOME/bin/llc -O0 -disable-fp-elim -filetype=asm -o main-single.s main-single-full.llvm
+g++ -static -O0 -fno-inline -o main-single main-single.s -lm -lz -no-pie -lpthread
+./main-single 1 decode
